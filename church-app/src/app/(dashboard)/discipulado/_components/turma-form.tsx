@@ -47,7 +47,10 @@ export function TurmaForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-xl space-y-6 rounded-xl bg-card p-6 ring-1 ring-foreground/10"
+    >
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="start_date">Início *</Label>

@@ -59,7 +59,10 @@ export function RelatorioForm({ celulas }: { celulas: Celula[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-2xl space-y-6 rounded-xl bg-card p-6 ring-1 ring-foreground/10"
+    >
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label>Célula *</Label>

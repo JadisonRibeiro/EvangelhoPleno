@@ -1,17 +1,25 @@
 import Link from "next/link";
+import {
+  Users,
+  Church,
+  ClipboardCheck,
+  Heart,
+  Plus,
+  ArrowRight,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ROLE_LABELS, type Role } from "@/lib/types";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-function StatCard({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="rounded-md border p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="text-2xl font-semibold">{value}</p>
-    </div>
-  );
-}
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
+import { StatCard } from "@/components/stat-card";
 
 function isoDiasAtras(dias: number) {
   const d = new Date();
@@ -67,6 +75,7 @@ async function VisaoAdmin() {
   );
   const semRelatorio = cels.filter((c) => !reportadas.has(c.id));
 
+  const total = ativos.length || 1;
   const jornada = [
     { label: "Batizados", n: ativos.filter((m) => m.is_baptized).length },
     { label: "Abrigo", n: ativos.filter((m) => m.completed_abrigo).length },
@@ -82,51 +91,74 @@ async function VisaoAdmin() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Membros ativos" value={ativos.length} />
-        <StatCard label="Células ativas" value={cels.length} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Membros ativos" value={ativos.length} icon={Users} />
+        <StatCard label="Células ativas" value={cels.length} icon={Church} />
         <StatCard
           label="Relatórios (7 dias)"
           value={reportadas.size}
+          icon={ClipboardCheck}
         />
-        <StatCard label="Novos no mês (AMAR)" value={convertidosMes ?? 0} />
+        <StatCard
+          label="Novos no mês"
+          value={convertidosMes ?? 0}
+          icon={Heart}
+          hint="Ministério AMAR"
+        />
       </div>
 
-      <section>
-        <h2 className="mb-3 text-lg font-medium">Jornada espiritual</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {jornada.map((j) => (
-            <div key={j.label} className="rounded-md border p-4">
-              <p className="text-sm text-muted-foreground">{j.label}</p>
-              <p className="text-xl font-semibold">
-                {j.n}
-                <span className="ml-1 text-sm font-normal text-muted-foreground">
-                  / {ativos.length}
-                </span>
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div className="grid gap-4 lg:grid-cols-5">
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-base">Jornada espiritual</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {jornada.map((j) => {
+              const pct = Math.round((j.n / total) * 100);
+              return (
+                <div key={j.label} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">{j.label}</span>
+                    <span className="font-medium" data-tabular>
+                      {j.n}
+                      <span className="text-muted-foreground"> / {ativos.length}</span>
+                    </span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-brand transition-all"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
 
-      <section>
-        <h2 className="mb-3 text-lg font-medium">
-          Células sem relatório na semana
-        </h2>
-        {semRelatorio.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Todas as células ativas reportaram nos últimos 7 dias. 🎉
-          </p>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {semRelatorio.map((c) => (
-              <Badge key={c.id} variant="outline">
-                {c.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-      </section>
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-base">
+              Células sem relatório na semana
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {semRelatorio.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Todas as células ativas reportaram nos últimos 7 dias. 🎉
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {semRelatorio.map((c) => (
+                  <Badge key={c.id} variant="outline">
+                    {c.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
@@ -141,36 +173,39 @@ async function VisaoLiderCelula({ perfilId }: { perfilId: string }) {
   const cels = (celulas as { id: string; name: string }[] | null) ?? [];
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium">Minhas células</h2>
-        <Link href="/relatorios/novo" className={buttonVariants({ size: "sm" })}>
-          Novo relatório
-        </Link>
-      </div>
-      {cels.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Você ainda não lidera nenhuma célula.
-        </p>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {cels.map((c) => (
-            <div
-              key={c.id}
-              className="flex items-center justify-between rounded-md border p-4"
-            >
-              <span className="font-medium">{c.name}</span>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Minhas células</CardTitle>
+        <CardAction>
+          <Link
+            href="/relatorios/novo"
+            className={buttonVariants({ size: "sm" })}
+          >
+            <Plus className="size-4" /> Novo relatório
+          </Link>
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        {cels.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Você ainda não lidera nenhuma célula.
+          </p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {cels.map((c) => (
               <Link
+                key={c.id}
                 href="/membros"
-                className={buttonVariants({ variant: "outline", size: "sm" })}
+                className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
               >
-                Membros
+                <span className="font-medium">{c.name}</span>
+                <ArrowRight className="size-4 text-muted-foreground" />
               </Link>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -184,31 +219,31 @@ async function VisaoLiderMinisterio({ perfilId }: { perfilId: string }) {
   const mins = (ministerios as { id: string; name: string }[] | null) ?? [];
 
   return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-medium">Meus ministérios</h2>
-      {mins.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Você ainda não lidera nenhum ministério.
-        </p>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {mins.map((m) => (
-            <div
-              key={m.id}
-              className="flex items-center justify-between rounded-md border p-4"
-            >
-              <span className="font-medium">{m.name}</span>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Meus ministérios</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {mins.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Você ainda não lidera nenhum ministério.
+          </p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {mins.map((m) => (
               <Link
+                key={m.id}
                 href={`/ministerios/${m.id}`}
-                className={buttonVariants({ variant: "outline", size: "sm" })}
+                className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
               >
-                Abrir
+                <span className="font-medium">{m.name}</span>
+                <ArrowRight className="size-4 text-muted-foreground" />
               </Link>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -227,15 +262,14 @@ export default async function DashboardPage() {
   const role = (perfil?.role as Role) ?? "member";
   const nome = perfil?.full_name ?? "";
   const perfilId = perfil?.id as string | undefined;
+  const primeiroNome = nome.split(" ")[0];
 
   return (
-    <div className="space-y-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold">
-          Olá{nome ? `, ${nome}` : ""} 👋
-        </h1>
-        <p className="text-sm text-muted-foreground">{ROLE_LABELS[role]}</p>
-      </header>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title={`Olá${primeiroNome ? `, ${primeiroNome}` : ""} 👋`}
+        description={`Painel · ${ROLE_LABELS[role]}`}
+      />
 
       {(role === "admin" || role === "pastor") && <VisaoAdmin />}
       {role === "cell_leader" && perfilId && (
@@ -245,9 +279,11 @@ export default async function DashboardPage() {
         <VisaoLiderMinisterio perfilId={perfilId} />
       )}
       {role === "member" && (
-        <p className="text-sm text-muted-foreground">
-          Bem-vindo! Use o menu acima para navegar.
-        </p>
+        <Card>
+          <CardContent className="text-sm text-muted-foreground">
+            Bem-vindo! Use o menu lateral para navegar pelo sistema.
+          </CardContent>
+        </Card>
       )}
     </div>
   );

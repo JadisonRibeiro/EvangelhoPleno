@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
   STATUS_AMAR,
@@ -9,6 +10,8 @@ import {
 } from "@/lib/validations/amar";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
 import {
   Table,
   TableBody,
@@ -63,31 +66,33 @@ export default async function AmarPage({
       : registros;
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Ministério AMAR</h1>
-          <p className="text-sm text-muted-foreground">
-            Recepção e acompanhamento de novos
-          </p>
-        </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Ministério AMAR"
+        description="Recepção e acompanhamento de novos"
+      >
         <Link href="/amar/novo" className={buttonVariants()}>
-          Novo cadastro
+          <Plus className="size-4" /> Novo cadastro
         </Link>
-      </div>
+      </PageHeader>
 
       {/* Indicadores */}
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {STATUS_AMAR.map((s) => (
-          <div key={s} className="rounded-md border p-4">
+          <div
+            key={s}
+            className="rounded-xl bg-card p-4 ring-1 ring-foreground/10"
+          >
             <p className="text-sm text-muted-foreground">{STATUS_LABELS[s]}</p>
-            <p className="text-2xl font-semibold">{contagem[s]}</p>
+            <p className="text-2xl font-semibold tracking-tight" data-tabular>
+              {contagem[s]}
+            </p>
           </div>
         ))}
       </div>
 
       {/* Filtro por status */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         <Link
           href="/amar"
           className={buttonVariants({
@@ -118,13 +123,15 @@ export default async function AmarPage({
       )}
 
       {!error && filtrados.length === 0 ? (
-        <div className="rounded-md border border-dashed p-10 text-center text-muted-foreground">
-          Nenhum registro {filtro ? "neste status" : "ainda"}.
-        </div>
+        <Card>
+          <CardContent className="py-16 text-center text-sm text-muted-foreground">
+            Nenhum registro {filtro ? "neste status" : "ainda"}.
+          </CardContent>
+        </Card>
       ) : (
-        <div className="rounded-md border">
+        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Telefone</TableHead>

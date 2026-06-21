@@ -10,6 +10,8 @@ import { login } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Card,
   CardContent,
@@ -39,13 +41,20 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Entrar</CardTitle>
-          <CardDescription>Acesse com seu e-mail e senha</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <main className="relative flex min-h-screen items-center justify-center bg-muted/40 p-4">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
+      <div className="flex w-full max-w-sm flex-col items-center gap-6">
+        <Logo className="[&_img]:h-10" />
+        <Card className="w-full">
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">Bem-vindo de volta</CardTitle>
+            <CardDescription>
+              Acesse sua conta para continuar
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
@@ -79,8 +88,12 @@ export default function LoginPage() {
               {isPending ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        <p className="text-xs text-muted-foreground">
+          Evangelho Pleno · Gestão da Igreja
+        </p>
+      </div>
     </main>
   );
 }

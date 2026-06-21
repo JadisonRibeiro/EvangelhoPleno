@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ROLE_LABELS, type Role } from "@/lib/types";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
 import {
   Table,
   TableBody,
@@ -59,19 +62,15 @@ export default async function MembrosPage() {
   const membros = (data as MembroRow[] | null) ?? [];
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Membros</h1>
-          <p className="text-sm text-muted-foreground">
-            {membros.length}{" "}
-            {membros.length === 1 ? "membro cadastrado" : "membros cadastrados"}
-          </p>
-        </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Membros"
+        description={`${membros.length} ${membros.length === 1 ? "membro cadastrado" : "membros cadastrados"}`}
+      >
         <Link href="/membros/novo" className={buttonVariants()}>
-          Novo membro
+          <Plus className="size-4" /> Novo membro
         </Link>
-      </div>
+      </PageHeader>
 
       {error && (
         <p className="text-sm text-destructive">
@@ -80,13 +79,15 @@ export default async function MembrosPage() {
       )}
 
       {!error && membros.length === 0 ? (
-        <div className="rounded-md border border-dashed p-10 text-center text-muted-foreground">
-          Nenhum membro cadastrado ainda.
-        </div>
+        <Card>
+          <CardContent className="py-16 text-center text-sm text-muted-foreground">
+            Nenhum membro cadastrado ainda.
+          </CardContent>
+        </Card>
       ) : (
-        <div className="rounded-md border">
+        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Cidade</TableHead>

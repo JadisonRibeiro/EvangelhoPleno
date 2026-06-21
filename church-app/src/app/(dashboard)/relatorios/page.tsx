@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
 import {
   Table,
   TableBody,
@@ -39,19 +42,15 @@ export default async function RelatoriosPage() {
   const relatorios = (data as RelatorioRow[] | null) ?? [];
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Relatórios de Célula</h1>
-          <p className="text-sm text-muted-foreground">
-            {relatorios.length}{" "}
-            {relatorios.length === 1 ? "relatório" : "relatórios"}
-          </p>
-        </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Relatórios de Célula"
+        description={`${relatorios.length} ${relatorios.length === 1 ? "relatório" : "relatórios"}`}
+      >
         <Link href="/relatorios/novo" className={buttonVariants()}>
-          Novo relatório
+          <Plus className="size-4" /> Novo relatório
         </Link>
-      </div>
+      </PageHeader>
 
       {error && (
         <p className="text-sm text-destructive">
@@ -60,13 +59,15 @@ export default async function RelatoriosPage() {
       )}
 
       {!error && relatorios.length === 0 ? (
-        <div className="rounded-md border border-dashed p-10 text-center text-muted-foreground">
-          Nenhum relatório registrado ainda.
-        </div>
+        <Card>
+          <CardContent className="py-16 text-center text-sm text-muted-foreground">
+            Nenhum relatório registrado ainda.
+          </CardContent>
+        </Card>
       ) : (
-        <div className="rounded-md border">
+        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Célula</TableHead>
                 <TableHead>Data</TableHead>

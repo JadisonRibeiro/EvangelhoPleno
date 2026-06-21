@@ -63,7 +63,10 @@ export function MinisterioForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-2xl space-y-6 rounded-xl bg-card p-6 ring-1 ring-foreground/10"
+    >
       <div className="space-y-2">
         <Label htmlFor="name">Nome do ministério *</Label>
         <Input id="name" {...register("name")} />

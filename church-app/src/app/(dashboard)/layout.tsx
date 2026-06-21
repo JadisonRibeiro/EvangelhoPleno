@@ -1,38 +1,35 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { logout } from "./actions";
+import { createClient } from "@/lib/supabase/server";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "./_components/app-sidebar";
+import { AppHeader } from "./_components/app-header";
+import { type Role } from "@/lib/types";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/membros", label: "Membros" },
-  { href: "/celulas", label: "Células" },
-  { href: "/relatorios", label: "Relatórios" },
-  { href: "/ministerios", label: "Ministérios" },
-  { href: "/escalas", label: "Escalas" },
-  { href: "/discipulado", label: "Discipulado" },
-  { href: "/amar", label: "AMAR" },
-];
-
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: perfil } = user
+    ? await supabase
+        .from("profiles")
+        .select("full_name, role")
+        .eq("user_id", user.id)
+        .single()
+    : { data: null };
+
+  const nome = perfil?.full_name ?? "Usuário";
+  const role = (perfil?.role as Role) ?? "member";
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="flex items-center justify-between border-b px-6 py-3">
-        <nav className="flex items-center gap-4 text-sm">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:underline">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <form action={logout}>
-          <Button type="submit" variant="outline" size="sm">
-            Sair
-          </Button>
-        </form>
-      </header>
-      <div className="flex-1">{children}</div>
-    </div>
+    <SidebarProvider>
+      <AppSidebar nome={nome} role={role} />
+      <SidebarInset>
+        <AppHeader />
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

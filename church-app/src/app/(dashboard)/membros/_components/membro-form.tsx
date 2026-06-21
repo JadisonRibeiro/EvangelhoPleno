@@ -99,7 +99,10 @@ export function MembroForm({ cells }: { cells: Cell[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-2xl space-y-6 rounded-xl bg-card p-6 ring-1 ring-foreground/10"
+    >
       <div className="space-y-2">
         <Label htmlFor="full_name">Nome completo *</Label>
         <Input id="full_name" {...register("full_name")} />
