@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
+import { ExcluirMembro } from "./_components/excluir-membro";
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ type MembroRow = {
   completed_abrigo: boolean;
   completed_escola_discipulo: boolean;
   did_encontro_com_deus: boolean;
-  cells: { name: string } | null;
+  cell: { name: string } | null;
 };
 
 function JornadaBadges({ m }: { m: MembroRow }) {
@@ -55,7 +56,7 @@ export default async function MembrosPage() {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, full_name, city, role, is_active, is_baptized, completed_abrigo, completed_escola_discipulo, did_encontro_com_deus, cells(name)",
+      "id, full_name, city, role, is_active, is_baptized, completed_abrigo, completed_escola_discipulo, did_encontro_com_deus, cell:cells!profiles_cell_id_fkey(name)",
     )
     .order("full_name");
 
@@ -95,6 +96,7 @@ export default async function MembrosPage() {
                 <TableHead>Papel</TableHead>
                 <TableHead>Jornada</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -102,7 +104,7 @@ export default async function MembrosPage() {
                 <TableRow key={m.id}>
                   <TableCell className="font-medium">{m.full_name}</TableCell>
                   <TableCell>{m.city ?? "—"}</TableCell>
-                  <TableCell>{m.cells?.name ?? "—"}</TableCell>
+                  <TableCell>{m.cell?.name ?? "—"}</TableCell>
                   <TableCell>{ROLE_LABELS[m.role]}</TableCell>
                   <TableCell>
                     <JornadaBadges m={m} />
@@ -111,6 +113,20 @@ export default async function MembrosPage() {
                     <Badge variant={m.is_active ? "default" : "outline"}>
                       {m.is_active ? "Ativo" : "Inativo"}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        href={`/membros/${m.id}/editar`}
+                        className={buttonVariants({
+                          variant: "outline",
+                          size: "sm",
+                        })}
+                      >
+                        Editar
+                      </Link>
+                      <ExcluirMembro id={m.id} nome={m.full_name} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

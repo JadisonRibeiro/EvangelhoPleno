@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { membroSchema, type MembroInput } from "@/lib/validations/membro";
 import { ROLE_LABELS, type Cell, type Role } from "@/lib/types";
-import { criarMembro } from "../actions";
+import { criarMembro, atualizarMembro } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +22,15 @@ import {
 
 const SEM_CELULA = "none";
 
-export function MembroForm({ cells }: { cells: Cell[] }) {
+export function MembroForm({
+  cells,
+  membroId,
+  initial,
+}: {
+  cells: Cell[];
+  membroId?: string;
+  initial?: Partial<MembroInput>;
+}) {
   const [isPending, startTransition] = useTransition();
   const {
     register,
@@ -33,26 +41,28 @@ export function MembroForm({ cells }: { cells: Cell[] }) {
   } = useForm<MembroInput>({
     resolver: zodResolver(membroSchema),
     defaultValues: {
-      full_name: "",
-      phone: "",
-      city: "",
-      birth_date: "",
-      cell_id: "",
-      role: "member",
-      is_baptized: false,
-      baptism_date: "",
-      completed_abrigo: false,
-      abrigo_completed_at: "",
-      completed_escola_discipulo: false,
-      escola_completed_at: "",
-      did_encontro_com_deus: false,
-      encontro_date: "",
+      full_name: initial?.full_name ?? "",
+      phone: initial?.phone ?? "",
+      city: initial?.city ?? "",
+      birth_date: initial?.birth_date ?? "",
+      cell_id: initial?.cell_id ?? "",
+      role: initial?.role ?? "member",
+      is_baptized: initial?.is_baptized ?? false,
+      baptism_date: initial?.baptism_date ?? "",
+      completed_abrigo: initial?.completed_abrigo ?? false,
+      abrigo_completed_at: initial?.abrigo_completed_at ?? "",
+      completed_escola_discipulo: initial?.completed_escola_discipulo ?? false,
+      escola_completed_at: initial?.escola_completed_at ?? "",
+      did_encontro_com_deus: initial?.did_encontro_com_deus ?? false,
+      encontro_date: initial?.encontro_date ?? "",
     },
   });
 
   function onSubmit(values: MembroInput) {
     startTransition(async () => {
-      const result = await criarMembro(values);
+      const result = membroId
+        ? await atualizarMembro(membroId, values)
+        : await criarMembro(values);
       if (result?.error) {
         toast.error(result.error);
       }
@@ -202,7 +212,11 @@ export function MembroForm({ cells }: { cells: Cell[] }) {
 
       <div className="flex gap-3">
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Salvando..." : "Salvar membro"}
+          {isPending
+            ? "Salvando..."
+            : membroId
+              ? "Salvar alterações"
+              : "Salvar membro"}
         </Button>
       </div>
     </form>

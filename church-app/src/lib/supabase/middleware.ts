@@ -38,6 +38,7 @@ export async function updateSession(request: NextRequest) {
   const publicas = [
     "/login",
     "/recuperar-senha",
+    "/atualizar-senha",
     "/manifest.webmanifest",
     "/sw.js",
     "/apple-icon",

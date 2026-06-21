@@ -10,15 +10,8 @@ export type MembroResult = { error: string } | undefined;
 // Converte string vazia em null para colunas opcionais.
 const ouNulo = (v?: string) => (v && v.trim() !== "" ? v : null);
 
-export async function criarMembro(values: MembroInput): Promise<MembroResult> {
-  const parsed = membroSchema.safeParse(values);
-  if (!parsed.success) {
-    return { error: "Dados inválidos." };
-  }
-  const d = parsed.data;
-
-  const supabase = await createClient();
-  const { error } = await supabase.from("profiles").insert({
+function toRow(d: MembroInput) {
+  return {
     full_name: d.full_name,
     phone: ouNulo(d.phone),
     city: ouNulo(d.city),
@@ -35,12 +28,44 @@ export async function criarMembro(values: MembroInput): Promise<MembroResult> {
       : null,
     did_encontro_com_deus: d.did_encontro_com_deus,
     encontro_date: d.did_encontro_com_deus ? ouNulo(d.encontro_date) : null,
-  });
+  };
+}
 
-  if (error) {
-    return { error: error.message };
-  }
+export async function criarMembro(values: MembroInput): Promise<MembroResult> {
+  const parsed = membroSchema.safeParse(values);
+  if (!parsed.success) return { error: "Dados inválidos." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").insert(toRow(parsed.data));
+  if (error) return { error: error.message };
 
   revalidatePath("/membros");
   redirect("/membros");
+}
+
+export async function atualizarMembro(
+  id: string,
+  values: MembroInput,
+): Promise<MembroResult> {
+  const parsed = membroSchema.safeParse(values);
+  if (!parsed.success) return { error: "Dados inválidos." };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update(toRow(parsed.data))
+    .eq("id", id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/membros");
+  redirect("/membros");
+}
+
+export async function excluirMembro(id: string): Promise<MembroResult> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").delete().eq("id", id);
+  if (error) {
+    return { error: "Não foi possível excluir (pode liderar uma célula/ministério)." };
+  }
+  revalidatePath("/membros");
 }
