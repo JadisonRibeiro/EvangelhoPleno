@@ -1,0 +1,2 @@
+-- seed.sql — dados iniciais para desenvolvimento
+-- Preencha com inserts de seed conforme a spec (seção 4).
