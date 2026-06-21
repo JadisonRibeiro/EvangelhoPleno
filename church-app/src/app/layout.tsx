@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { RegisterSW } from "@/components/register-sw";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +15,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "App Igreja",
+  title: "Evangelho Pleno",
   description: "Gestão de igreja em células",
+  appleWebApp: {
+    capable: true,
+    title: "Pleno",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#4F46E5",
 };
 
 export default function RootLayout({
@@ -31,6 +41,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <Toaster richColors position="top-center" />
+        <RegisterSW />
       </body>
     </html>
   );

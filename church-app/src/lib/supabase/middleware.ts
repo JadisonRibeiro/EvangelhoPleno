@@ -34,10 +34,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Rotas públicas (não exigem login).
-  const isPublicRoute =
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/recuperar-senha");
+  // Rotas e assets públicos (não exigem login).
+  const publicas = [
+    "/login",
+    "/recuperar-senha",
+    "/manifest.webmanifest",
+    "/sw.js",
+    "/apple-icon",
+    "/icon",
+  ];
+  const isPublicRoute = publicas.some((p) =>
+    request.nextUrl.pathname.startsWith(p),
+  );
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
