@@ -9,15 +9,27 @@ export type CelulaResult = { error: string } | undefined;
 
 const ouNulo = (v?: string) => (v && v.trim() !== "" ? v : null);
 
+const ouNumero = (v?: string) => {
+  const n = v && v.trim() !== "" ? Number(v.replace(",", ".")) : null;
+  return n !== null && !Number.isNaN(n) ? n : null;
+};
+
 function toRow(d: CelulaInput) {
   return {
     name: d.name,
+    leader_name: ouNulo(d.leader_name),
+    cell_type: ouNulo(d.cell_type),
+    rede: ouNulo(d.rede),
     leader_id: ouNulo(d.leader_id),
     co_leader_id: ouNulo(d.co_leader_id),
     meeting_day: ouNulo(d.meeting_day),
     meeting_time: ouNulo(d.meeting_time),
-    address: ouNulo(d.address),
+    city: ouNulo(d.city),
     neighborhood: ouNulo(d.neighborhood),
+    address: ouNulo(d.address),
+    latitude: ouNumero(d.latitude),
+    longitude: ouNumero(d.longitude),
+    photo_url: ouNulo(d.photo_url),
     is_active: d.is_active,
   };
 }

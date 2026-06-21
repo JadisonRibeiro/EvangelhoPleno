@@ -1,0 +1,4 @@
+# Dados sensíveis / planilhas locais (não versionar — contêm dados pessoais)
+*.xlsx
+*.xls
+*.csv

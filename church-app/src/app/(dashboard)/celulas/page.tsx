@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { DIAS_LABELS } from "@/lib/validations/celula";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,29 +18,26 @@ import { ExcluirCelula } from "./_components/excluir-celula";
 type CelulaRow = {
   id: string;
   name: string;
-  meeting_day: keyof typeof DIAS_LABELS | null;
-  meeting_time: string | null;
   neighborhood: string | null;
   is_active: boolean;
+  leader_name: string | null;
+  cell_type: string | null;
+  rede: string | null;
   leader: { full_name: string } | null;
-  co_leader: { full_name: string } | null;
 };
 
-function reuniao(c: CelulaRow) {
-  const dia = c.meeting_day ? DIAS_LABELS[c.meeting_day] : null;
-  const hora = c.meeting_time ? c.meeting_time.slice(0, 5) : null;
-  if (!dia && !hora) return "—";
-  return [dia, hora].filter(Boolean).join(" • ");
-}
+const CORES_REDE: Record<string, string> = {
+  Amarela: "bg-amber-400",
+  Preta: "bg-foreground",
+};
 
 export default async function CelulasPage() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("cells")
     .select(
-      `id, name, meeting_day, meeting_time, neighborhood, is_active,
-       leader:profiles!cells_leader_id_fkey(full_name),
-       co_leader:profiles!cells_co_leader_id_fkey(full_name)`,
+      `id, name, neighborhood, is_active, leader_name, cell_type, rede,
+       leader:profiles!cells_leader_id_fkey(full_name)`,
     )
     .order("name");
 
@@ -77,7 +73,8 @@ export default async function CelulasPage() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Líder</TableHead>
-                <TableHead>Reunião</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Rede</TableHead>
                 <TableHead>Bairro</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
@@ -87,8 +84,22 @@ export default async function CelulasPage() {
               {celulas.map((c) => (
                 <TableRow key={c.id}>
                   <TableCell className="font-medium">{c.name}</TableCell>
-                  <TableCell>{c.leader?.full_name ?? "—"}</TableCell>
-                  <TableCell>{reuniao(c)}</TableCell>
+                  <TableCell>
+                    {c.leader_name ?? c.leader?.full_name ?? "—"}
+                  </TableCell>
+                  <TableCell>{c.cell_type ?? "—"}</TableCell>
+                  <TableCell>
+                    {c.rede ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span
+                          className={`size-2.5 rounded-full ${CORES_REDE[c.rede] ?? "bg-muted-foreground"}`}
+                        />
+                        {c.rede}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
                   <TableCell>{c.neighborhood ?? "—"}</TableCell>
                   <TableCell>
                     <Badge variant={c.is_active ? "default" : "outline"}>
