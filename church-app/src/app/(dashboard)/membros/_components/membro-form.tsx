@@ -44,6 +44,8 @@ export function MembroForm({
       full_name: initial?.full_name ?? "",
       phone: initial?.phone ?? "",
       city: initial?.city ?? "",
+      address: initial?.address ?? "",
+      neighborhood: initial?.neighborhood ?? "",
       birth_date: initial?.birth_date ?? "",
       cell_id: initial?.cell_id ?? "",
       role: initial?.role ?? "member",
@@ -129,6 +131,17 @@ export function MembroForm({
         <div className="space-y-2">
           <Label htmlFor="city">Cidade</Label>
           <Input id="city" {...register("city")} />
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="address">Endereço</Label>
+          <Input id="address" {...register("address")} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="neighborhood">Bairro</Label>
+          <Input id="neighborhood" {...register("neighborhood")} />
         </div>
       </div>
 

@@ -14,8 +14,10 @@ function toRow(d: MembroInput) {
   return {
     full_name: d.full_name,
     phone: ouNulo(d.phone),
-    city: ouNulo(d.city),
     birth_date: ouNulo(d.birth_date),
+    address: ouNulo(d.address),
+    neighborhood: ouNulo(d.neighborhood),
+    city: ouNulo(d.city),
     cell_id: ouNulo(d.cell_id),
     role: d.role,
     is_baptized: d.is_baptized,

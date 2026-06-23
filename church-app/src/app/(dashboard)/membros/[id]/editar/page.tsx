@@ -30,6 +30,8 @@ export default async function EditarMembroPage({
     full_name: membro.full_name,
     phone: membro.phone ?? "",
     city: membro.city ?? "",
+    address: membro.address ?? "",
+    neighborhood: membro.neighborhood ?? "",
     birth_date: membro.birth_date ?? "",
     cell_id: membro.cell_id ?? "",
     role: membro.role,

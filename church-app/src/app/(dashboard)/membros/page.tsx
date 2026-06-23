@@ -19,7 +19,7 @@ import {
 type MembroRow = {
   id: string;
   full_name: string;
-  city: string | null;
+  neighborhood: string | null;
   role: Role;
   is_active: boolean;
   is_baptized: boolean;
@@ -56,7 +56,7 @@ export default async function MembrosPage() {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, full_name, city, role, is_active, is_baptized, completed_abrigo, completed_escola_discipulo, did_encontro_com_deus, cell:cells!profiles_cell_id_fkey(name)",
+      "id, full_name, neighborhood, role, is_active, is_baptized, completed_abrigo, completed_escola_discipulo, did_encontro_com_deus, cell:cells!profiles_cell_id_fkey(name)",
     )
     .order("full_name");
 
@@ -91,7 +91,7 @@ export default async function MembrosPage() {
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Cidade</TableHead>
+                <TableHead>Bairro</TableHead>
                 <TableHead>Célula</TableHead>
                 <TableHead>Papel</TableHead>
                 <TableHead>Jornada</TableHead>
@@ -103,7 +103,7 @@ export default async function MembrosPage() {
               {membros.map((m) => (
                 <TableRow key={m.id}>
                   <TableCell className="font-medium">{m.full_name}</TableCell>
-                  <TableCell>{m.city ?? "—"}</TableCell>
+                  <TableCell>{m.neighborhood ?? "—"}</TableCell>
                   <TableCell>{m.cell?.name ?? "—"}</TableCell>
                   <TableCell>{ROLE_LABELS[m.role]}</TableCell>
                   <TableCell>

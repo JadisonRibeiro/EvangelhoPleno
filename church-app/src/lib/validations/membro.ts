@@ -14,8 +14,10 @@ const opcional = z.string().optional().or(z.literal(""));
 export const membroSchema = z.object({
   full_name: z.string().min(3, "Nome obrigatório"),
   phone: opcional,
-  city: opcional,
   birth_date: opcional,
+  address: opcional,
+  neighborhood: opcional,
+  city: opcional,
   cell_id: z.string().uuid().optional().or(z.literal("")),
   role: roleEnum,
 
