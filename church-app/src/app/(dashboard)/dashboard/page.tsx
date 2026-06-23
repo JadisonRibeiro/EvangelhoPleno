@@ -2,8 +2,14 @@ import Link from "next/link";
 import {
   Users,
   Church,
-  ClipboardCheck,
+  MapPin,
+  BookOpen,
+  GraduationCap,
+  HeartHandshake,
+  CalendarDays,
+  ClipboardList,
   Heart,
+  ClipboardCheck,
   Plus,
   ArrowRight,
 } from "lucide-react";
@@ -18,8 +24,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PageHeader } from "@/components/page-header";
 import { StatCard } from "@/components/stat-card";
+import { LauncherTile } from "@/components/launcher-tile";
 
 function isoDiasAtras(dias: number) {
   const d = new Date();
@@ -121,7 +127,10 @@ async function VisaoAdmin() {
                     <span className="text-muted-foreground">{j.label}</span>
                     <span className="font-medium" data-tabular>
                       {j.n}
-                      <span className="text-muted-foreground"> / {ativos.length}</span>
+                      <span className="text-muted-foreground">
+                        {" "}
+                        / {ativos.length}
+                      </span>
                     </span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -149,11 +158,16 @@ async function VisaoAdmin() {
               </p>
             ) : (
               <div className="flex flex-wrap gap-2">
-                {semRelatorio.map((c) => (
+                {semRelatorio.slice(0, 30).map((c) => (
                   <Badge key={c.id} variant="outline">
                     {c.name}
                   </Badge>
                 ))}
+                {semRelatorio.length > 30 && (
+                  <Badge variant="secondary">
+                    +{semRelatorio.length - 30}
+                  </Badge>
+                )}
               </div>
             )}
           </CardContent>
@@ -247,43 +261,87 @@ async function VisaoLiderMinisterio({ perfilId }: { perfilId: string }) {
   );
 }
 
+const ATALHOS = [
+  { href: "/membros", label: "Membros", icon: Users, key: "membros" },
+  { href: "/celulas", label: "Células", icon: Church, key: "celulas" },
+  { href: "/celulas/mapa", label: "Mapa de Células", icon: MapPin },
+  { href: "/discipulado/abrigo", label: "Abrigo", icon: BookOpen },
+  {
+    href: "/discipulado/escola",
+    label: "Escola de Discípulo",
+    icon: GraduationCap,
+  },
+  { href: "/ministerios", label: "Ministérios", icon: HeartHandshake },
+  { href: "/escalas", label: "Escalas", icon: CalendarDays },
+  { href: "/relatorios", label: "Relatórios", icon: ClipboardList },
+  { href: "/amar", label: "AMAR", icon: Heart },
+];
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: perfil } = await supabase
-    .from("profiles")
-    .select("id, full_name, role")
-    .eq("user_id", user!.id)
-    .single();
+  const [{ data: perfil }, { count: membrosCount }, { count: celulasCount }] =
+    await Promise.all([
+      supabase
+        .from("profiles")
+        .select("id, full_name, role")
+        .eq("user_id", user!.id)
+        .single(),
+      supabase.from("profiles").select("*", { count: "exact", head: true }),
+      supabase
+        .from("cells")
+        .select("*", { count: "exact", head: true })
+        .eq("is_active", true),
+    ]);
 
   const role = (perfil?.role as Role) ?? "member";
   const nome = perfil?.full_name ?? "";
   const perfilId = perfil?.id as string | undefined;
   const primeiroNome = nome.split(" ")[0];
 
-  return (
-    <div className="space-y-6 p-4 sm:p-6">
-      <PageHeader
-        title={`Olá${primeiroNome ? `, ${primeiroNome}` : ""} 👋`}
-        description={`Painel · ${ROLE_LABELS[role]}`}
-      />
+  const contagens: Record<string, number | undefined> = {
+    membros: membrosCount ?? undefined,
+    celulas: celulasCount ?? undefined,
+  };
 
-      {(role === "admin" || role === "pastor") && <VisaoAdmin />}
+  return (
+    <div className="space-y-8 p-4 sm:p-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          Olá{primeiroNome ? `, ${primeiroNome}` : ""} 👋
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {ROLE_LABELS[role]} · Bem-vindo ao Evangelho Pleno
+        </p>
+      </div>
+
+      {/* Acesso rápido — navegação principal */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+        {ATALHOS.map((a) => (
+          <LauncherTile
+            key={a.href}
+            href={a.href}
+            label={a.label}
+            icon={a.icon}
+            count={a.key ? contagens[a.key] : undefined}
+          />
+        ))}
+      </div>
+
+      {(role === "admin" || role === "pastor") && (
+        <section className="space-y-4">
+          <h2 className="text-lg font-medium tracking-tight">Resumo</h2>
+          <VisaoAdmin />
+        </section>
+      )}
       {role === "cell_leader" && perfilId && (
         <VisaoLiderCelula perfilId={perfilId} />
       )}
       {role === "ministry_leader" && perfilId && (
         <VisaoLiderMinisterio perfilId={perfilId} />
-      )}
-      {role === "member" && (
-        <Card>
-          <CardContent className="text-sm text-muted-foreground">
-            Bem-vindo! Use o menu lateral para navegar pelo sistema.
-          </CardContent>
-        </Card>
       )}
     </div>
   );
