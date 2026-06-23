@@ -1,7 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "./_components/app-sidebar";
-import { AppHeader } from "./_components/app-header";
+import { AppTopbar } from "./_components/app-topbar";
 import { type Role } from "@/lib/types";
 
 export default async function DashboardLayout({
@@ -24,12 +22,9 @@ export default async function DashboardLayout({
   const role = (perfil?.role as Role) ?? "member";
 
   return (
-    <SidebarProvider>
-      <AppSidebar nome={nome} role={role} />
-      <SidebarInset>
-        <AppHeader />
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="flex min-h-screen flex-col">
+      <AppTopbar nome={nome} role={role} />
+      <main className="flex-1">{children}</main>
+    </div>
   );
 }
