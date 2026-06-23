@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +49,12 @@ export default async function CelulasPage() {
         title="Células"
         description={`${celulas.length} ${celulas.length === 1 ? "célula cadastrada" : "células cadastradas"}`}
       >
+        <Link
+          href="/celulas/mapa"
+          className={buttonVariants({ variant: "outline" })}
+        >
+          <MapPin className="size-4" /> Mapa
+        </Link>
         <Link href="/celulas/nova" className={buttonVariants()}>
           <Plus className="size-4" /> Nova célula
         </Link>
