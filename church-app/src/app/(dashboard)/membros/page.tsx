@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { ExcluirMembro } from "./_components/excluir-membro";
+import { MembrosFiltros, type CelulaOpt } from "./_components/membros-filtros";
 import {
   Table,
   TableBody,
@@ -15,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+const PAGE_SIZE = 20;
 
 type MembroRow = {
   id: string;
@@ -51,27 +54,65 @@ function JornadaBadges({ m }: { m: MembroRow }) {
   );
 }
 
-export default async function MembrosPage() {
+export default async function MembrosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; q?: string; cell?: string }>;
+}) {
+  const { page: pageStr, q, cell } = await searchParams;
+  const page = Math.max(1, Number(pageStr) || 1);
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
   const supabase = await createClient();
-  const { data, error } = await supabase
+
+  let query = supabase
     .from("profiles")
     .select(
       "id, full_name, neighborhood, role, is_active, is_baptized, completed_abrigo, completed_escola_discipulo, did_encontro_com_deus, cell:cells!profiles_cell_id_fkey(name)",
-    )
-    .order("full_name");
+      { count: "exact" },
+    );
+  if (q) query = query.ilike("full_name", `%${q}%`);
+  if (cell) query = query.eq("cell_id", cell);
+
+  const { data, count, error } = await query
+    .order("full_name")
+    .range(from, to);
+
+  const { data: celulasData } = await supabase
+    .from("cells")
+    .select("id, name")
+    .order("name");
 
   const membros = (data as MembroRow[] | null) ?? [];
+  const celulas = (celulasData as CelulaOpt[] | null) ?? [];
+  const total = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  const hrefPagina = (p: number) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (cell) params.set("cell", cell);
+    if (p > 1) params.set("page", String(p));
+    const qs = params.toString();
+    return qs ? `/membros?${qs}` : "/membros";
+  };
+
+  const btn = buttonVariants({ variant: "outline", size: "sm" });
+  const btnOff = `${btn} pointer-events-none opacity-50`;
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
       <PageHeader
         title="Membros"
-        description={`${membros.length} ${membros.length === 1 ? "membro cadastrado" : "membros cadastrados"}`}
+        description={`${total} ${total === 1 ? "membro" : "membros"}`}
       >
         <Link href="/membros/novo" className={buttonVariants()}>
           <Plus className="size-4" /> Novo membro
         </Link>
       </PageHeader>
+
+      <MembrosFiltros celulas={celulas} />
 
       {error && (
         <p className="text-sm text-destructive">
@@ -82,57 +123,78 @@ export default async function MembrosPage() {
       {!error && membros.length === 0 ? (
         <Card>
           <CardContent className="py-16 text-center text-sm text-muted-foreground">
-            Nenhum membro cadastrado ainda.
+            Nenhum membro encontrado.
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-          <Table>
-            <TableHeader className="bg-muted/50">
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Bairro</TableHead>
-                <TableHead>Célula</TableHead>
-                <TableHead>Papel</TableHead>
-                <TableHead>Jornada</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {membros.map((m) => (
-                <TableRow key={m.id}>
-                  <TableCell className="font-medium">{m.full_name}</TableCell>
-                  <TableCell>{m.neighborhood ?? "—"}</TableCell>
-                  <TableCell>{m.cell?.name ?? "—"}</TableCell>
-                  <TableCell>{ROLE_LABELS[m.role]}</TableCell>
-                  <TableCell>
-                    <JornadaBadges m={m} />
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={m.is_active ? "default" : "outline"}>
-                      {m.is_active ? "Ativo" : "Inativo"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end gap-2">
-                      <Link
-                        href={`/membros/${m.id}/editar`}
-                        className={buttonVariants({
-                          variant: "outline",
-                          size: "sm",
-                        })}
-                      >
-                        Editar
-                      </Link>
-                      <ExcluirMembro id={m.id} nome={m.full_name} />
-                    </div>
-                  </TableCell>
+        <>
+          <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+            <Table>
+              <TableHeader className="bg-muted/50">
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Bairro</TableHead>
+                  <TableHead>Célula</TableHead>
+                  <TableHead>Papel</TableHead>
+                  <TableHead>Jornada</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {membros.map((m) => (
+                  <TableRow key={m.id}>
+                    <TableCell className="font-medium">{m.full_name}</TableCell>
+                    <TableCell>{m.neighborhood ?? "—"}</TableCell>
+                    <TableCell>{m.cell?.name ?? "—"}</TableCell>
+                    <TableCell>{ROLE_LABELS[m.role]}</TableCell>
+                    <TableCell>
+                      <JornadaBadges m={m} />
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={m.is_active ? "default" : "outline"}>
+                        {m.is_active ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          href={`/membros/${m.id}/editar`}
+                          className={btn}
+                        >
+                          Editar
+                        </Link>
+                        <ExcluirMembro id={m.id} nome={m.full_name} />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>
+              Página {page} de {totalPages}
+            </span>
+            <div className="flex gap-2">
+              {page > 1 ? (
+                <Link href={hrefPagina(page - 1)} className={btn}>
+                  Anterior
+                </Link>
+              ) : (
+                <span className={btnOff}>Anterior</span>
+              )}
+              {page < totalPages ? (
+                <Link href={hrefPagina(page + 1)} className={btn}>
+                  Próxima
+                </Link>
+              ) : (
+                <span className={btnOff}>Próxima</span>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
