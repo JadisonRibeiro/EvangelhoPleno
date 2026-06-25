@@ -106,6 +106,7 @@ export default async function MembrosPage({
       <PageHeader
         title="Membros"
         description={`${total} ${total === 1 ? "membro" : "membros"}`}
+        breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Membros" }]}
       >
         <Link href="/membros/novo" className={buttonVariants()}>
           <Plus className="size-4" /> Novo membro
@@ -128,7 +129,43 @@ export default async function MembrosPage({
         </Card>
       ) : (
         <>
-          <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+          {/* Mobile: cards em coluna única (sensação de app nativo) */}
+          <ul className="space-y-3 md:hidden">
+            {membros.map((m) => (
+              <li
+                key={m.id}
+                className="rounded-2xl border bg-card p-4 ring-1 ring-foreground/5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{m.full_name}</p>
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                      {ROLE_LABELS[m.role]}
+                      {m.cell?.name ? ` · ${m.cell.name}` : ""}
+                    </p>
+                  </div>
+                  <Badge variant={m.is_active ? "default" : "outline"}>
+                    {m.is_active ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
+                <div className="mt-3">
+                  <JornadaBadges m={m} />
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Link
+                    href={`/membros/${m.id}/editar`}
+                    className={`${btn} flex-1`}
+                  >
+                    Editar
+                  </Link>
+                  <ExcluirMembro id={m.id} nome={m.full_name} />
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: tabela densa */}
+          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow>

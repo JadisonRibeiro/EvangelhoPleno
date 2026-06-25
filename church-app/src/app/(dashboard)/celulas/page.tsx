@@ -48,6 +48,7 @@ export default async function CelulasPage() {
       <PageHeader
         title="Células"
         description={`${celulas.length} ${celulas.length === 1 ? "célula cadastrada" : "células cadastradas"}`}
+        breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Células" }]}
       >
         <Link
           href="/celulas/mapa"
@@ -73,9 +74,54 @@ export default async function CelulasPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-          <Table>
-            <TableHeader className="bg-muted/50">
+        <>
+          {/* Mobile: cards em coluna única */}
+          <ul className="space-y-3 md:hidden">
+            {celulas.map((c) => (
+              <li
+                key={c.id}
+                className="rounded-2xl border bg-card p-4 ring-1 ring-foreground/5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{c.name}</p>
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                      {c.leader_name ?? c.leader?.full_name ?? "Sem líder"}
+                      {c.neighborhood ? ` · ${c.neighborhood}` : ""}
+                    </p>
+                  </div>
+                  <Badge variant={c.is_active ? "default" : "outline"}>
+                    {c.is_active ? "Ativa" : "Inativa"}
+                  </Badge>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                  {c.cell_type && <span>{c.cell_type}</span>}
+                  {c.rede && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <span
+                        className={`size-2.5 rounded-full ${CORES_REDE[c.rede] ?? "bg-muted-foreground"}`}
+                      />
+                      Rede {c.rede}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Link
+                    href={`/celulas/${c.id}/editar`}
+                    className={`${buttonVariants({ variant: "outline", size: "sm" })} flex-1`}
+                  >
+                    Editar
+                  </Link>
+                  <ExcluirCelula id={c.id} nome={c.name} />
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: tabela densa */}
+          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+            <Table>
+              <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Líder</TableHead>
@@ -130,7 +176,8 @@ export default async function CelulasPage() {
               ))}
             </TableBody>
           </Table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

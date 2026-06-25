@@ -11,6 +11,10 @@ export default function DiscipuladoPage() {
       <PageHeader
         title="Discipulado"
         description="Gestão de turmas do Abrigo e da Escola de Discípulo"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Discipulado" },
+        ]}
       />
       <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
         {(["abrigo", "escola"] as const).map((tipo) => {

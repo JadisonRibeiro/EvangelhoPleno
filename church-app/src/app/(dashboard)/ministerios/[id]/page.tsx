@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import {
   MembrosMinisterio,
   type MembroAtual,
@@ -38,25 +37,21 @@ export default async function MinisterioDetalhePage({
   if (!ministerio) notFound();
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold">{ministerio.name}</h1>
-            {ministerio.requires_schedule && (
-              <Badge variant="secondary">Gera escala</Badge>
-            )}
-          </div>
-          {ministerio.description && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              {ministerio.description}
-            </p>
-          )}
-        </div>
-        <Link href="/ministerios" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title={ministerio.name}
+        description={ministerio.description ?? undefined}
+        backHref="/ministerios"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Ministérios", href: "/ministerios" },
+          { label: "Membros" },
+        ]}
+      >
+        {ministerio.requires_schedule && (
+          <Badge variant="secondary">Gera escala</Badge>
+        )}
+      </PageHeader>
 
       <div className="max-w-2xl">
         <MembrosMinisterio

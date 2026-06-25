@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MESES } from "@/lib/algorithms/escala";
-import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 
 type EntradaRaw = {
   date: string;
@@ -66,21 +65,20 @@ export default async function EscalaDetalhePage({
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{escala.ministry?.name}</h1>
-          <p className="text-sm text-muted-foreground">
-            Escala de {MESES[escala.month - 1]} / {escala.year}
-          </p>
-        </div>
-        <Link href="/escalas" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title={escala.ministry?.name ?? "Escala"}
+        description={`Escala de ${MESES[escala.month - 1]} / ${escala.year}`}
+        backHref="/escalas"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Escalas", href: "/escalas" },
+          { label: "Detalhe" },
+        ]}
+      />
 
       {escala.notes && (
-        <p className="mb-4 max-w-2xl rounded-md border bg-muted/30 p-3 text-sm">
+        <p className="max-w-2xl rounded-md border bg-muted/30 p-3 text-sm">
           {escala.notes}
         </p>
       )}

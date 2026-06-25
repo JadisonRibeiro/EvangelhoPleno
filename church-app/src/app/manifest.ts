@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Gestão de igreja em células: membros, células, ministérios, escalas e acompanhamento.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#4F46E5",
+    background_color: "#0c0d0f",
+    theme_color: "#0c0d0f",
     lang: "pt-BR",
     icons: [
       {

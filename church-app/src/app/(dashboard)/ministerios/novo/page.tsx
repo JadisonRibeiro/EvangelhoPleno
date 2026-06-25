@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { MinisterioForm, type Lider } from "../_components/ministerio-form";
 
 export default async function NovoMinisterioPage() {
@@ -12,13 +11,16 @@ export default async function NovoMinisterioPage() {
     .order("full_name");
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Novo ministério</h1>
-        <Link href="/ministerios" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Novo ministério"
+        backHref="/ministerios"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Ministérios", href: "/ministerios" },
+          { label: "Novo" },
+        ]}
+      />
       <MinisterioForm lideres={(lideres as Lider[]) ?? []} />
     </div>
   );

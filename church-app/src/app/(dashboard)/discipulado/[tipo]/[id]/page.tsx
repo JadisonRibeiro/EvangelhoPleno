@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DISCIPULADO, isTipo } from "@/lib/discipulado";
-import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import {
   AlunosTurma,
   type Aluno,
@@ -61,29 +60,24 @@ export default async function TurmaDetalhePage({
   const disponiveis = pessoas.filter((p) => !matriculados.has(p.id));
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold">
-              {cfg.label} — {dataLabel(turma.start_date)}
-            </h1>
-            <Badge variant={turma.is_open ? "default" : "outline"}>
-              {turma.is_open ? "Aberta" : "Fechada"}
-            </Badge>
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {turma.total_lessons} lições
-            {turma.end_date ? ` · término ${dataLabel(turma.end_date)}` : ""}
-          </p>
-        </div>
-        <Link
-          href={`/discipulado/${tipo}`}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title={`${cfg.label} — ${dataLabel(turma.start_date)}`}
+        description={`${turma.total_lessons} lições${
+          turma.end_date ? ` · término ${dataLabel(turma.end_date)}` : ""
+        }`}
+        backHref={`/discipulado/${tipo}`}
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Discipulado", href: "/discipulado" },
+          { label: cfg.label, href: `/discipulado/${tipo}` },
+          { label: "Turma" },
+        ]}
+      >
+        <Badge variant={turma.is_open ? "default" : "outline"}>
+          {turma.is_open ? "Aberta" : "Fechada"}
+        </Badge>
+      </PageHeader>
 
       <div className="max-w-2xl">
         <AlunosTurma

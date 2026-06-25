@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import type { MembroInput } from "@/lib/validations/membro";
 import type { Cell } from "@/lib/types";
@@ -47,11 +45,16 @@ export default async function EditarMembroPage({
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
-      <PageHeader title="Editar membro" description={membro.full_name}>
-        <Link href="/membros" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </PageHeader>
+      <PageHeader
+        title="Editar membro"
+        description={membro.full_name}
+        backHref="/membros"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Membros", href: "/membros" },
+          { label: "Editar" },
+        ]}
+      />
       <MembroForm
         cells={(cells as Cell[]) ?? []}
         membroId={id}

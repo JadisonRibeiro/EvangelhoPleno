@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { GerarEscala, type Ministerio } from "../_components/gerar-escala";
 
 export default async function GerarEscalaPage() {
@@ -12,13 +11,16 @@ export default async function GerarEscalaPage() {
     .order("name");
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Gerar escala</h1>
-        <Link href="/escalas" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Gerar escala"
+        backHref="/escalas"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Escalas", href: "/escalas" },
+          { label: "Gerar" },
+        ]}
+      />
       <GerarEscala ministerios={(ministerios as Ministerio[]) ?? []} />
     </div>
   );

@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 
 type RelatorioInfo = {
   meeting_date: string;
@@ -50,21 +49,21 @@ export default async function RelatorioDetalhePage({
   const conversoes = (convs as Conversao[] | null) ?? [];
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{rel.cell?.name ?? "Célula"}</h1>
-          <p className="text-sm text-muted-foreground">
-            Reunião de {dataLabel(rel.meeting_date)}
-            {rel.autor ? ` · por ${rel.autor.full_name}` : ""}
-          </p>
-        </div>
-        <Link href="/relatorios" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title={rel.cell?.name ?? "Célula"}
+        description={`Reunião de ${dataLabel(rel.meeting_date)}${
+          rel.autor ? ` · por ${rel.autor.full_name}` : ""
+        }`}
+        backHref="/relatorios"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Relatórios", href: "/relatorios" },
+          { label: "Detalhe" },
+        ]}
+      />
 
-      <div className="mb-6 grid max-w-md gap-3 sm:grid-cols-2">
+      <div className="grid max-w-md gap-3 sm:grid-cols-2">
         <div className="rounded-md border p-4">
           <p className="text-sm text-muted-foreground">Membros presentes</p>
           <p className="text-2xl font-semibold">{rel.total_members}</p>

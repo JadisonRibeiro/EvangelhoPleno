@@ -32,16 +32,13 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-950 p-4">
-      {/* Brilhos desfocados (efeito espelhado em tons de cinza) */}
+      {/* Luz única e discreta — sem excesso de brilho */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-24 top-0 size-80 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-16 right-0 size-96 rounded-full bg-zinc-400/15 blur-3xl" />
-        <div className="absolute left-1/3 top-1/2 size-64 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-black/60" />
+        <div className="absolute left-1/2 top-0 size-136 -translate-x-1/2 -translate-y-1/3 rounded-full bg-white/6 blur-3xl" />
       </div>
 
-      {/* Cartão de vidro */}
-      <div className="relative w-full max-w-sm rounded-[28px] border border-white/15 bg-white/[0.07] p-8 shadow-2xl backdrop-blur-2xl">
+      {/* Cartão de vidro sóbrio */}
+      <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-white/4 p-8 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
         <div className="mb-8 flex justify-center">
           <Image
             src="/logo-branca.png"
@@ -49,7 +46,7 @@ export default function LoginPage() {
             width={180}
             height={72}
             priority
-            className="h-12 w-auto drop-shadow"
+            className="h-11 w-auto"
           />
         </div>
 
@@ -117,9 +114,9 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full rounded-2xl bg-gradient-to-r from-zinc-700 via-zinc-800 to-neutral-950 py-3 text-sm font-semibold tracking-wider text-white shadow-lg ring-1 ring-white/10 transition hover:from-zinc-600 hover:via-zinc-700 hover:to-neutral-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-neutral-900 transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isPending ? "ENTRANDO..." : "ENTRAR"}
+            {isPending ? "Entrando..." : "Entrar"}
           </button>
         </form>
 

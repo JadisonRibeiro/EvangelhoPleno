@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import type { MinisterioInput } from "@/lib/validations/ministerio";
 import { MinisterioForm, type Lider } from "../../_components/ministerio-form";
 
@@ -33,13 +32,17 @@ export default async function EditarMinisterioPage({
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Editar ministério</h1>
-        <Link href="/ministerios" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Editar ministério"
+        description={ministerio.name}
+        backHref="/ministerios"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Ministérios", href: "/ministerios" },
+          { label: "Editar" },
+        ]}
+      />
       <MinisterioForm
         ministerioId={id}
         lideres={(lideres as Lider[]) ?? []}

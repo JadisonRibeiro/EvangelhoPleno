@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { AppTopbar } from "./_components/app-topbar";
+import { AppBottomNav } from "./_components/app-bottom-nav";
 import { type Role } from "@/lib/types";
 
 export default async function DashboardLayout({
@@ -24,7 +25,10 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <AppTopbar nome={nome} role={role} />
-      <main className="flex-1">{children}</main>
+      <main className="pb-safe-nav flex-1">
+        <div className="app-container">{children}</div>
+      </main>
+      <AppBottomNav />
     </div>
   );
 }

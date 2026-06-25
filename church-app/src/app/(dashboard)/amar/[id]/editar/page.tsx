@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import type { AmarInput } from "@/lib/validations/amar";
 import { AmarForm, type Pessoa } from "../../_components/amar-form";
 
@@ -45,13 +44,17 @@ export default async function EditarAmarPage({
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Editar cadastro — AMAR</h1>
-        <Link href="/amar" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Editar cadastro"
+        description={registro.full_name}
+        backHref="/amar"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "AMAR", href: "/amar" },
+          { label: "Editar" },
+        ]}
+      />
       <AmarForm
         amarId={id}
         pessoas={(pessoas as Pessoa[]) ?? []}

@@ -51,6 +51,12 @@ export default async function TurmasPage({
       <PageHeader
         title={cfg.label}
         description={`${turmas.length} ${turmas.length === 1 ? "turma" : "turmas"}`}
+        backHref="/discipulado"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Discipulado", href: "/discipulado" },
+          { label: cfg.label },
+        ]}
       >
         <Link href={`/discipulado/${tipo}/nova`} className={buttonVariants()}>
           <Plus className="size-4" /> Nova turma
@@ -68,9 +74,38 @@ export default async function TurmasPage({
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-          <Table>
-            <TableHeader className="bg-muted/50">
+        <>
+          {/* Mobile: cards em coluna única */}
+          <ul className="space-y-3 md:hidden">
+            {turmas.map((t) => (
+              <li key={t.id}>
+                <Link
+                  href={`/discipulado/${tipo}/${t.id}`}
+                  className="block rounded-2xl border bg-card p-4 ring-1 ring-foreground/5 transition-colors hover:bg-accent/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">
+                        Início {dataLabel(t.start_date)}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {t.total_lessons} lições · {t.alunos?.[0]?.count ?? 0}{" "}
+                        alunos
+                      </p>
+                    </div>
+                    <Badge variant={t.is_open ? "default" : "outline"}>
+                      {t.is_open ? "Aberta" : "Fechada"}
+                    </Badge>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: tabela densa */}
+          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+            <Table>
+              <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Início</TableHead>
                 <TableHead>Término</TableHead>
@@ -106,7 +141,8 @@ export default async function TurmasPage({
               ))}
             </TableBody>
           </Table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

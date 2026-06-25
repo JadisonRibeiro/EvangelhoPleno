@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { AmarForm, type Pessoa } from "../_components/amar-form";
 
 export default async function NovoAmarPage() {
@@ -12,13 +11,17 @@ export default async function NovoAmarPage() {
     .order("full_name");
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Novo cadastro — AMAR</h1>
-        <Link href="/amar" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Novo cadastro"
+        description="Ministério AMAR"
+        backHref="/amar"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "AMAR", href: "/amar" },
+          { label: "Novo" },
+        ]}
+      />
       <AmarForm pessoas={(pessoas as Pessoa[]) ?? []} />
     </div>
   );

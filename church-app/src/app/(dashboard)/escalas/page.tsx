@@ -41,6 +41,7 @@ export default async function EscalasPage() {
       <PageHeader
         title="Escalas"
         description={`${escalas.length} ${escalas.length === 1 ? "escala gerada" : "escalas geradas"}`}
+        breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Escalas" }]}
       >
         <Link href="/escalas/gerar" className={buttonVariants()}>
           <Plus className="size-4" /> Gerar escala
@@ -60,9 +61,34 @@ export default async function EscalasPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-          <Table>
-            <TableHeader className="bg-muted/50">
+        <>
+          {/* Mobile: cards em coluna única */}
+          <ul className="space-y-3 md:hidden">
+            {escalas.map((e) => (
+              <li key={e.id}>
+                <Link
+                  href={`/escalas/${e.id}`}
+                  className="flex items-center justify-between gap-3 rounded-2xl border bg-card p-4 ring-1 ring-foreground/5 transition-colors hover:bg-accent/40"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">
+                      {e.ministry?.name ?? "—"}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {MESES[e.month - 1]} / {e.year} ·{" "}
+                      {e.entradas?.[0]?.count ?? 0} escalações
+                    </p>
+                  </div>
+                  <span className="text-xs font-medium text-brand">Ver</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: tabela densa */}
+          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+            <Table>
+              <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Ministério</TableHead>
                 <TableHead>Mês/Ano</TableHead>
@@ -95,7 +121,8 @@ export default async function EscalasPage() {
               ))}
             </TableBody>
           </Table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

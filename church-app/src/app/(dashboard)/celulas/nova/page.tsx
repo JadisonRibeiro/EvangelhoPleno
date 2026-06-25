@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { CelulaForm, type Lider } from "../_components/celula-form";
 
 export default async function NovaCelulaPage() {
@@ -12,13 +11,16 @@ export default async function NovaCelulaPage() {
     .order("full_name");
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Nova célula</h1>
-        <Link href="/celulas" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Nova célula"
+        backHref="/celulas"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Células", href: "/celulas" },
+          { label: "Nova" },
+        ]}
+      />
       <CelulaForm lideres={(lideres as Lider[]) ?? []} />
     </div>
   );

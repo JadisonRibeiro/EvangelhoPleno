@@ -46,6 +46,7 @@ export default async function RelatoriosPage() {
       <PageHeader
         title="Relatórios de Célula"
         description={`${relatorios.length} ${relatorios.length === 1 ? "relatório" : "relatórios"}`}
+        breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Relatórios" }]}
       >
         <Link href="/relatorios/novo" className={buttonVariants()}>
           <Plus className="size-4" /> Novo relatório
@@ -65,9 +66,43 @@ export default async function RelatoriosPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-          <Table>
-            <TableHeader className="bg-muted/50">
+        <>
+          {/* Mobile: cards em coluna única */}
+          <ul className="space-y-3 md:hidden">
+            {relatorios.map((r) => (
+              <li key={r.id}>
+                <Link
+                  href={`/relatorios/${r.id}`}
+                  className="block rounded-2xl border bg-card p-4 ring-1 ring-foreground/5 transition-colors hover:bg-accent/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">
+                        {r.cell?.name ?? "—"}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {dataLabel(r.meeting_date)}
+                      </p>
+                    </div>
+                    {r.conversoes?.[0]?.count ? (
+                      <Badge variant="secondary">
+                        {r.conversoes[0].count} conv.
+                      </Badge>
+                    ) : null}
+                  </div>
+                  <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
+                    <span>{r.total_members} membros</span>
+                    <span>{r.total_visitors} visitantes</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: tabela densa */}
+          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+            <Table>
+              <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Célula</TableHead>
                 <TableHead>Data</TableHead>
@@ -110,7 +145,8 @@ export default async function RelatoriosPage() {
               ))}
             </TableBody>
           </Table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

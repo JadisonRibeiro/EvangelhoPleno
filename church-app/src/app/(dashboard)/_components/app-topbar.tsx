@@ -2,45 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, LogOut } from "lucide-react";
+import { LogOut, ChevronRight, LayoutGrid } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { ROLE_LABELS, type Role } from "@/lib/types";
+import { MODULES, secaoAtual } from "@/lib/nav";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from "../actions";
 
-const NAV = [
-  { href: "/dashboard", label: "Início" },
-  { href: "/membros", label: "Membros" },
-  { href: "/celulas", label: "Células" },
-  { href: "/relatorios", label: "Relatórios" },
-  { href: "/ministerios", label: "Ministérios" },
-  { href: "/escalas", label: "Escalas" },
-  { href: "/discipulado", label: "Discipulado" },
-  { href: "/amar", label: "AMAR" },
-];
-
 export function AppTopbar({ nome, role }: { nome: string; role: Role }) {
   const pathname = usePathname();
-  const isActive = (href: string) =>
-    href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+  const secao = secaoAtual(pathname);
 
   const iniciais =
     nome
@@ -52,74 +35,70 @@ export function AppTopbar({ nome, role }: { nome: string; role: Role }) {
       .toUpperCase() || "U";
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-md">
-      <div className="flex h-16 items-center gap-2 px-4 sm:px-6">
-        {/* Menu mobile */}
-        <Sheet>
-          <SheetTrigger
-            render={
-              <Button variant="ghost" size="icon" className="lg:hidden">
-                <Menu className="size-5" />
-              </Button>
-            }
-          />
-          <SheetContent side="left" className="w-72 p-0">
-            <SheetHeader className="border-b p-4">
-              <SheetTitle className="text-left">
-                <Logo />
-              </SheetTitle>
-            </SheetHeader>
-            <nav className="flex flex-col gap-1 p-3">
-              {NAV.map((n) => (
-                <Link
-                  key={n.href}
-                  href={n.href}
-                  className={cn(
-                    "rounded-lg px-3 py-2.5 text-sm transition-colors",
-                    isActive(n.href)
-                      ? "bg-accent font-medium text-foreground"
-                      : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-                  )}
-                >
-                  {n.label}
-                </Link>
-              ))}
-            </nav>
-          </SheetContent>
-        </Sheet>
-
-        {/* Logo */}
-        <Link href="/dashboard" className="shrink-0">
+    <header className="sticky top-0 z-30 border-b bg-background/70 backdrop-blur-xl">
+      <div className="app-container flex h-14 items-center gap-1 px-4 sm:h-16 sm:px-6">
+        {/* Logo + breadcrumb de seção */}
+        <Link
+          href="/dashboard"
+          className="shrink-0 rounded-md transition-opacity hover:opacity-80"
+        >
           <Logo />
         </Link>
+        {secao && (
+          <div className="flex min-w-0 items-center">
+            <ChevronRight className="mx-1 size-4 shrink-0 text-muted-foreground/50" />
+            <span className="truncate text-sm font-medium">{secao.label}</span>
+          </div>
+        )}
 
-        {/* Navegação desktop */}
-        <nav className="ml-3 hidden items-center gap-0.5 lg:flex">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={cn(
-                "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive(n.href)
-                  ? "bg-accent text-foreground"
-                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-              )}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Direita: tema + usuário */}
+        {/* Direita: menu de módulos (desktop) + tema + usuário */}
         <div className="ml-auto flex items-center gap-1">
-          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button variant="ghost" className="h-11 gap-2 px-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden h-9 gap-2 md:inline-flex"
+                >
+                  <LayoutGrid className="size-4" />
+                  <span>Módulos</span>
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" sideOffset={8} className="w-72 p-2">
+              <DropdownMenuLabel className="px-2 pb-1.5">
+                Navegar
+              </DropdownMenuLabel>
+              <div className="grid grid-cols-2 gap-1">
+                {MODULES.map((m) => {
+                  const ativo = pathname.startsWith(m.href);
+                  return (
+                    <DropdownMenuItem
+                      key={m.href}
+                      className={cn(
+                        "flex-col items-start gap-1 rounded-lg p-2.5",
+                        ativo && "bg-accent",
+                      )}
+                      render={<Link href={m.href} />}
+                    >
+                      <m.icon className="size-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">{m.label}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <ThemeToggle />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" className="h-11 gap-2 px-1.5 sm:px-2">
                   <Avatar className="size-8 rounded-lg">
-                    <AvatarFallback className="rounded-lg bg-brand text-xs font-medium text-brand-foreground">
+                    <AvatarFallback className="rounded-lg bg-secondary text-xs font-medium">
                       {iniciais}
                     </AvatarFallback>
                   </Avatar>
@@ -132,9 +111,11 @@ export function AppTopbar({ nome, role }: { nome: string; role: Role }) {
                 </Button>
               }
             />
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="flex flex-col">
-                <span>{nome}</span>
+            <DropdownMenuContent align="end" sideOffset={8} className="w-56">
+              <DropdownMenuLabel className="flex flex-col gap-0.5 px-2 py-1.5">
+                <span className="text-sm font-medium text-foreground">
+                  {nome}
+                </span>
                 <span className="text-xs font-normal text-muted-foreground">
                   {ROLE_LABELS[role]}
                 </span>
@@ -143,7 +124,7 @@ export function AppTopbar({ nome, role }: { nome: string; role: Role }) {
               <form action={logout}>
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-accent"
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
                 >
                   <LogOut className="size-4" /> Sair
                 </button>

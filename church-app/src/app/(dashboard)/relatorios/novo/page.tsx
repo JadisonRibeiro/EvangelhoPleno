@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { RelatorioForm, type Celula } from "../_components/relatorio-form";
 
 export default async function NovoRelatorioPage() {
@@ -12,13 +11,16 @@ export default async function NovoRelatorioPage() {
     .order("name");
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Novo relatório de célula</h1>
-        <Link href="/relatorios" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Novo relatório de célula"
+        backHref="/relatorios"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Relatórios", href: "/relatorios" },
+          { label: "Novo" },
+        ]}
+      />
       <RelatorioForm celulas={(celulas as Celula[]) ?? []} />
     </div>
   );

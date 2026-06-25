@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DISCIPULADO, isTipo } from "@/lib/discipulado";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { TurmaForm } from "../../_components/turma-form";
 
 export default async function NovaTurmaPage({
@@ -14,16 +13,18 @@ export default async function NovaTurmaPage({
   const cfg = DISCIPULADO[tipo];
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Nova turma — {cfg.label}</h1>
-        <Link
-          href={`/discipulado/${tipo}`}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Nova turma"
+        description={cfg.label}
+        backHref={`/discipulado/${tipo}`}
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Discipulado", href: "/discipulado" },
+          { label: cfg.label, href: `/discipulado/${tipo}` },
+          { label: "Nova" },
+        ]}
+      />
       <TurmaForm
         tipo={tipo}
         temEncontro={cfg.temEncontro}

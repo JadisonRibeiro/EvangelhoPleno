@@ -70,6 +70,7 @@ export default async function AmarPage({
       <PageHeader
         title="Ministério AMAR"
         description="Recepção e acompanhamento de novos"
+        breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "AMAR" }]}
       >
         <Link href="/amar/novo" className={buttonVariants()}>
           <Plus className="size-4" /> Novo cadastro
@@ -77,7 +78,7 @@ export default async function AmarPage({
       </PageHeader>
 
       {/* Indicadores */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {STATUS_AMAR.map((s) => (
           <div
             key={s}
@@ -129,9 +130,50 @@ export default async function AmarPage({
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
-          <Table>
-            <TableHeader className="bg-muted/50">
+        <>
+          {/* Mobile: cards em coluna única */}
+          <ul className="space-y-3 md:hidden">
+            {filtrados.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-2xl border bg-card p-4 ring-1 ring-foreground/5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{r.full_name}</p>
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                      {r.phone ?? "Sem telefone"}
+                      {r.conversion_source
+                        ? ` · ${ORIGEM_LABELS[r.conversion_source]}`
+                        : ""}
+                    </p>
+                  </div>
+                  <Badge variant={STATUS_VARIANT[r.status]}>
+                    {STATUS_LABELS[r.status]}
+                  </Badge>
+                </div>
+                {r.responsavel?.full_name && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Responsável: {r.responsavel.full_name}
+                  </p>
+                )}
+                <div className="mt-4 flex gap-2">
+                  <Link
+                    href={`/amar/${r.id}/editar`}
+                    className={`${buttonVariants({ variant: "outline", size: "sm" })} flex-1`}
+                  >
+                    Editar
+                  </Link>
+                  <ExcluirAmar id={r.id} nome={r.full_name} />
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Desktop: tabela densa */}
+          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+            <Table>
+              <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Telefone</TableHead>
@@ -175,7 +217,8 @@ export default async function AmarPage({
               ))}
             </TableBody>
           </Table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

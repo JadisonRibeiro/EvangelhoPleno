@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buttonVariants } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import type { CelulaInput } from "@/lib/validations/celula";
 import { CelulaForm, type Lider } from "../../_components/celula-form";
 
@@ -39,13 +38,17 @@ export default async function EditarCelulaPage({
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Editar célula</h1>
-        <Link href="/celulas" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Editar célula"
+        description={celula.name}
+        backHref="/celulas"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Células", href: "/celulas" },
+          { label: "Editar" },
+        ]}
+      />
       <CelulaForm
         celulaId={id}
         lideres={(lideres as Lider[]) ?? []}

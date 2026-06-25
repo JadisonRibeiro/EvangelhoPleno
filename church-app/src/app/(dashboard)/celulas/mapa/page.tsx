@@ -47,6 +47,12 @@ export default async function MapaCelulasPage() {
       <PageHeader
         title="Mapa de células"
         description={`${celulas.length} células com localização`}
+        backHref="/celulas"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Células", href: "/celulas" },
+          { label: "Mapa" },
+        ]}
       >
         <Link href="/celulas" className={buttonVariants({ variant: "outline" })}>
           <List className="size-4" /> Ver lista

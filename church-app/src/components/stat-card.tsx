@@ -16,20 +16,21 @@ export function StatCard({
   hint?: string;
 }) {
   return (
-    <Card className="transition-shadow hover:shadow-sm">
-      <CardContent className="flex items-start gap-4">
-        {Icon && (
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
-            <Icon className="size-5" />
-          </div>
-        )}
-        <div className="min-w-0 space-y-0.5">
+    <Card className="gap-0">
+      <CardContent className="space-y-3">
+        <div className="flex items-center justify-between">
           <p className="truncate text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-semibold tracking-tight" data-tabular>
-            {value}
-          </p>
-          {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+          {Icon && (
+            <Icon className="size-4 shrink-0 text-muted-foreground/70" />
+          )}
         </div>
+        <p
+          className="text-[1.75rem] font-semibold leading-none tracking-tight"
+          data-tabular
+        >
+          {value}
+        </p>
+        {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       </CardContent>
     </Card>
   );

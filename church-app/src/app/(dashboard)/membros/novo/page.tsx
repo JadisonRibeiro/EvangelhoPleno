@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Cell } from "@/lib/types";
+import { PageHeader } from "@/components/page-header";
 import { MembroForm } from "../_components/membro-form";
-import { buttonVariants } from "@/components/ui/button";
 
 export default async function NovoMembroPage() {
   const supabase = await createClient();
@@ -13,13 +12,16 @@ export default async function NovoMembroPage() {
     .order("name");
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Novo membro</h1>
-        <Link href="/membros" className={buttonVariants({ variant: "outline" })}>
-          Voltar
-        </Link>
-      </div>
+    <div className="space-y-6 p-4 sm:p-6">
+      <PageHeader
+        title="Novo membro"
+        backHref="/membros"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Membros", href: "/membros" },
+          { label: "Novo" },
+        ]}
+      />
       <MembroForm cells={(cells as Cell[]) ?? []} />
     </div>
   );
