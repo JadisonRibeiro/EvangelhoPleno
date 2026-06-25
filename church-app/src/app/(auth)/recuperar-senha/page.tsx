@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/logo";
-import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Card,
   CardContent,
@@ -51,9 +50,6 @@ export default function RecuperarSenhaPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <div className="absolute right-4 top-4">
-        <ThemeToggle />
-      </div>
       <div className="flex w-full max-w-sm flex-col items-center gap-6">
         <Logo className="[&_img]:h-10" />
         <Card className="w-full">

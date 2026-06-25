@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { ROLE_LABELS, type Role } from "@/lib/types";
 import { MODULES, secaoAtual } from "@/lib/nav";
 import { Logo } from "@/components/logo";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -90,8 +89,6 @@ export function AppTopbar({ nome, role }: { nome: string; role: Role }) {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <ThemeToggle />
 
           <DropdownMenu>
             <DropdownMenuTrigger
