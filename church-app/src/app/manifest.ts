@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Evangelho Pleno — Gestão da Igreja",
     short_name: "Pleno",
-    description: "Gestão de igreja em células: membros, células, ministérios, escalas e acompanhamento.",
+    description: "Gestão de igreja em células: membros, células, ministérios e acompanhamento.",
     start_url: "/",
     display: "standalone",
     background_color: "#0c0d0f",

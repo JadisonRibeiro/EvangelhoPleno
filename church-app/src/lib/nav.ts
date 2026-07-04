@@ -4,9 +4,14 @@ import {
   MapPin,
   ClipboardList,
   HeartHandshake,
-  CalendarDays,
-  GraduationCap,
+  BookOpen,
+  Tent,
   Heart,
+  Link2,
+  HandHeart,
+  Flame,
+  Sparkles,
+  Baby,
   LayoutGrid,
   type LucideIcon,
 } from "lucide-react";
@@ -17,6 +22,8 @@ export type NavItem = {
   /** Descrição curta exibida em cards/menus. */
   description?: string;
   icon: LucideIcon;
+  /** Imagem ilustrativa (placeholder) exibida nos cards da Home. */
+  image?: string;
 };
 
 /**
@@ -30,48 +37,99 @@ export const MODULES: NavItem[] = [
     label: "Membros",
     description: "Cadastro e jornada espiritual",
     icon: Users,
+    image: "/images/modules/membros.webp",
   },
   {
     href: "/celulas",
     label: "Células",
     description: "Grupos e lideranças",
     icon: Church,
+    image: "/images/modules/celulas.webp",
   },
   {
     href: "/celulas/mapa",
     label: "Mapa de Células",
     description: "Distribuição geográfica",
     icon: MapPin,
+    image: "/images/modules/mapa.webp",
   },
   {
     href: "/relatorios",
-    label: "Relatórios",
+    label: "Relatório de Células",
     description: "Encontros semanais",
     icon: ClipboardList,
+    image: "/images/modules/relatorios.webp",
   },
   {
     href: "/ministerios",
     label: "Ministérios",
     description: "Equipes e serviço",
     icon: HeartHandshake,
+    image: "/images/modules/ministerios.webp",
   },
   {
-    href: "/escalas",
-    label: "Escalas",
-    description: "Organização mensal",
-    icon: CalendarDays,
+    href: "/discipulado/abrigo",
+    label: "Abrigo",
+    description: "Primeiros passos na fé",
+    icon: Tent,
+    image: "/images/modules/abrigo.webp",
   },
   {
-    href: "/discipulado",
-    label: "Discipulado",
-    description: "Abrigo e Escola",
-    icon: GraduationCap,
+    href: "/discipulado/escola",
+    label: "Escola de Discípulos",
+    description: "Formação e discipulado",
+    icon: BookOpen,
+    image: "/images/modules/escola.webp",
   },
+];
+
+/**
+ * Ministérios da igreja — exibidos como cards dentro do módulo Ministérios.
+ * "Amar" já possui fluxo completo; os demais abrem uma tela de apresentação
+ * ("em breve") até que cada gestão seja definida.
+ */
+export const MINISTERIOS: NavItem[] = [
   {
     href: "/amar",
-    label: "AMAR",
-    description: "Acolhimento de novos",
+    label: "Amar",
+    description: "Acolhimento de novos convertidos",
     icon: Heart,
+    image: "/images/ministerios/amar.svg",
+  },
+  {
+    href: "/ministerios/consolidar",
+    label: "Consolidar",
+    description: "Firmar os novos na fé",
+    icon: Link2,
+    image: "/images/ministerios/consolidar.svg",
+  },
+  {
+    href: "/ministerios/acolher",
+    label: "Acolher",
+    description: "Recepção e hospitalidade",
+    icon: HandHeart,
+    image: "/images/ministerios/acolher.svg",
+  },
+  {
+    href: "/ministerios/fgy",
+    label: "FGY",
+    description: "Ministério de Jovens",
+    icon: Flame,
+    image: "/images/ministerios/fgy.svg",
+  },
+  {
+    href: "/ministerios/fgt",
+    label: "FGT",
+    description: "Ministério de Adolescentes",
+    icon: Sparkles,
+    image: "/images/ministerios/fgt.svg",
+  },
+  {
+    href: "/ministerios/kids",
+    label: "Kids",
+    description: "Ministério infantil",
+    icon: Baby,
+    image: "/images/ministerios/kids.svg",
   },
 ];
 
@@ -82,11 +140,3 @@ export const PRIMARY: NavItem[] = [
   MODULES[1], // Células
   MODULES[3], // Relatórios
 ];
-
-/** Rótulo da seção atual a partir do pathname (para breadcrumb da topbar). */
-export function secaoAtual(pathname: string): NavItem | null {
-  if (pathname === "/dashboard") return null;
-  // Casa o prefixo mais específico primeiro (ex.: /celulas/mapa antes de /celulas)
-  const ordenado = [...MODULES].sort((a, b) => b.href.length - a.href.length);
-  return ordenado.find((m) => pathname.startsWith(m.href)) ?? null;
-}

@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { AcoesTela } from "@/app/(dashboard)/_components/acoes-tela";
 
 export type Crumb = { label: string; href?: string };
 
@@ -31,35 +32,41 @@ export function PageHeader({
 }) {
   return (
     <div className="space-y-4">
-      {breadcrumb && breadcrumb.length > 0 && (
-        <nav
-          aria-label="Trilha de navegação"
-          className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground"
-        >
-          {breadcrumb.map((c, i) => {
-            const ultimo = i === breadcrumb.length - 1;
-            return (
-              <span key={`${c.label}-${i}`} className="flex items-center gap-1">
-                {i > 0 && (
-                  <ChevronRight className="size-3.5 text-muted-foreground/50" />
-                )}
-                {c.href && !ultimo ? (
-                  <Link
-                    href={c.href}
-                    className="transition-colors hover:text-foreground"
-                  >
-                    {c.label}
-                  </Link>
-                ) : (
-                  <span className={cn(ultimo && "text-foreground")}>
-                    {c.label}
-                  </span>
-                )}
-              </span>
-            );
-          })}
-        </nav>
-      )}
+      {/* Utilitário de tela: trilha + ações fixas (Início / Sair) */}
+      <div className="flex items-center justify-between gap-2">
+        {breadcrumb && breadcrumb.length > 0 ? (
+          <nav
+            aria-label="Trilha de navegação"
+            className="flex min-w-0 flex-wrap items-center gap-1 text-xs text-muted-foreground"
+          >
+            {breadcrumb.map((c, i) => {
+              const ultimo = i === breadcrumb.length - 1;
+              return (
+                <span key={`${c.label}-${i}`} className="flex items-center gap-1">
+                  {i > 0 && (
+                    <ChevronRight className="size-3.5 text-muted-foreground/50" />
+                  )}
+                  {c.href && !ultimo ? (
+                    <Link
+                      href={c.href}
+                      className="transition-colors hover:text-foreground"
+                    >
+                      {c.label}
+                    </Link>
+                  ) : (
+                    <span className={cn(ultimo && "text-foreground")}>
+                      {c.label}
+                    </span>
+                  )}
+                </span>
+              );
+            })}
+          </nav>
+        ) : (
+          <span />
+        )}
+        <AcoesTela />
+      </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3">

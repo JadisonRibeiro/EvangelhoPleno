@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ROLE_LABELS, type Role } from "@/lib/types";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
+import { EmptyState } from "@/components/empty-state";
+import { Pagination } from "@/components/pagination";
+import { SearchBar } from "@/components/search-bar";
+import { FilterBar, FilterSelect } from "@/components/filter-bar";
 import { ExcluirMembro } from "./_components/excluir-membro";
-import { MembrosFiltros, type CelulaOpt } from "./_components/membros-filtros";
 import {
   Table,
   TableBody,
@@ -57,9 +59,15 @@ function JornadaBadges({ m }: { m: MembroRow }) {
 export default async function MembrosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; q?: string; cell?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    q?: string;
+    cell?: string;
+    bairro?: string;
+    status?: string;
+  }>;
 }) {
-  const { page: pageStr, q, cell } = await searchParams;
+  const { page: pageStr, q, cell, bairro, status } = await searchParams;
   const page = Math.max(1, Number(pageStr) || 1);
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
@@ -74,32 +82,45 @@ export default async function MembrosPage({
     );
   if (q) query = query.ilike("full_name", `%${q}%`);
   if (cell) query = query.eq("cell_id", cell);
+  if (bairro) query = query.eq("neighborhood", bairro);
+  if (status === "ativo") query = query.eq("is_active", true);
+  if (status === "inativo") query = query.eq("is_active", false);
 
   const { data, count, error } = await query
     .order("full_name")
     .range(from, to);
 
-  const { data: celulasData } = await supabase
-    .from("cells")
-    .select("id, name")
-    .order("name");
+  const [{ data: celulasData }, { data: bairrosData }] = await Promise.all([
+    supabase.from("cells").select("id, name").order("name"),
+    supabase.from("profiles").select("neighborhood").not("neighborhood", "is", null),
+  ]);
 
   const membros = (data as MembroRow[] | null) ?? [];
-  const celulas = (celulasData as CelulaOpt[] | null) ?? [];
+  const celulas = (celulasData as { id: string; name: string }[] | null) ?? [];
+  const bairros = [
+    ...new Set(
+      ((bairrosData as { neighborhood: string | null }[] | null) ?? [])
+        .map((b) => b.neighborhood)
+        .filter((b): b is string => !!b),
+    ),
+  ].sort((a, b) => a.localeCompare(b, "pt-BR"));
+
   const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const hrefPagina = (p: number) => {
+  const makeHref = (p: number) => {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     if (cell) params.set("cell", cell);
+    if (bairro) params.set("bairro", bairro);
+    if (status) params.set("status", status);
     if (p > 1) params.set("page", String(p));
     const qs = params.toString();
     return qs ? `/membros?${qs}` : "/membros";
   };
 
   const btn = buttonVariants({ variant: "outline", size: "sm" });
-  const btnOff = `${btn} pointer-events-none opacity-50`;
+  const temFiltro = Boolean(q || cell || bairro || status);
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
@@ -113,7 +134,34 @@ export default async function MembrosPage({
         </Link>
       </PageHeader>
 
-      <MembrosFiltros celulas={celulas} />
+      <FilterBar>
+        <SearchBar
+          param="q"
+          placeholder="Pesquisar membro por nome..."
+          className="w-full sm:min-w-64 sm:flex-1"
+        />
+        <FilterSelect
+          label="Célula"
+          param="cell"
+          allLabel="Todas as células"
+          options={celulas.map((c) => ({ value: c.id, label: c.name }))}
+        />
+        <FilterSelect
+          label="Bairro"
+          param="bairro"
+          allLabel="Todos os bairros"
+          options={bairros.map((b) => ({ value: b, label: b }))}
+        />
+        <FilterSelect
+          label="Status"
+          param="status"
+          allLabel="Todos"
+          options={[
+            { value: "ativo", label: "Ativo" },
+            { value: "inativo", label: "Inativo" },
+          ]}
+        />
+      </FilterBar>
 
       {error && (
         <p className="text-sm text-destructive">
@@ -122,11 +170,22 @@ export default async function MembrosPage({
       )}
 
       {!error && membros.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center text-sm text-muted-foreground">
-            Nenhum membro encontrado.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Users}
+          title={temFiltro ? "Nenhum membro encontrado" : "Nenhum membro cadastrado"}
+          description={
+            temFiltro
+              ? "Tente ajustar a busca ou os filtros."
+              : "Cadastre o primeiro membro para começar."
+          }
+          action={
+            !temFiltro && (
+              <Link href="/membros/novo" className={buttonVariants({ size: "sm" })}>
+                <Plus className="size-4" /> Novo membro
+              </Link>
+            )
+          }
+        />
       ) : (
         <>
           {/* Mobile: cards em coluna única (sensação de app nativo) */}
@@ -144,7 +203,7 @@ export default async function MembrosPage({
                       {m.cell?.name ? ` · ${m.cell.name}` : ""}
                     </p>
                   </div>
-                  <Badge variant={m.is_active ? "default" : "outline"}>
+                  <Badge variant={m.is_active ? "success" : "outline"}>
                     {m.is_active ? "Ativo" : "Inativo"}
                   </Badge>
                 </div>
@@ -164,11 +223,11 @@ export default async function MembrosPage({
             ))}
           </ul>
 
-          {/* Desktop: tabela densa */}
-          <div className="hidden overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 md:block">
+          {/* Desktop: tabela densa com header fixo */}
+          <div className="hidden max-h-[70vh] overflow-auto rounded-xl bg-card ring-1 ring-foreground/10 md:block">
             <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow>
+              <TableHeader className="sticky top-0 z-10 bg-muted/95 backdrop-blur-sm [&_th]:border-b">
+                <TableRow className="hover:bg-transparent">
                   <TableHead>Nome</TableHead>
                   <TableHead>Bairro</TableHead>
                   <TableHead>Célula</TableHead>
@@ -189,16 +248,13 @@ export default async function MembrosPage({
                       <JornadaBadges m={m} />
                     </TableCell>
                     <TableCell>
-                      <Badge variant={m.is_active ? "default" : "outline"}>
+                      <Badge variant={m.is_active ? "success" : "outline"}>
                         {m.is_active ? "Ativo" : "Inativo"}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-2">
-                        <Link
-                          href={`/membros/${m.id}/editar`}
-                          className={btn}
-                        >
+                        <Link href={`/membros/${m.id}/editar`} className={btn}>
                           Editar
                         </Link>
                         <ExcluirMembro id={m.id} nome={m.full_name} />
@@ -210,26 +266,11 @@ export default async function MembrosPage({
             </Table>
           </div>
 
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>
-              Página {page} de {totalPages}
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+            <span className="text-sm text-muted-foreground">
+              Página {page} de {totalPages} · {total} no total
             </span>
-            <div className="flex gap-2">
-              {page > 1 ? (
-                <Link href={hrefPagina(page - 1)} className={btn}>
-                  Anterior
-                </Link>
-              ) : (
-                <span className={btnOff}>Anterior</span>
-              )}
-              {page < totalPages ? (
-                <Link href={hrefPagina(page + 1)} className={btn}>
-                  Próxima
-                </Link>
-              ) : (
-                <span className={btnOff}>Próxima</span>
-              )}
-            </div>
+            <Pagination page={page} totalPages={totalPages} makeHref={makeHref} />
           </div>
         </>
       )}

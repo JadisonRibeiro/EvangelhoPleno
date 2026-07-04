@@ -31,10 +31,13 @@ type AmarRow = {
   responsavel: { full_name: string } | null;
 };
 
-const STATUS_VARIANT: Record<StatusAmar, "default" | "secondary" | "outline"> = {
+const STATUS_VARIANT: Record<
+  StatusAmar,
+  "default" | "secondary" | "success" | "outline"
+> = {
   novo: "default",
   em_contato: "secondary",
-  em_celula: "secondary",
+  em_celula: "success",
   inativo: "outline",
 };
 
@@ -68,9 +71,14 @@ export default async function AmarPage({
   return (
     <div className="space-y-6 p-4 sm:p-6">
       <PageHeader
-        title="Ministério AMAR"
+        title="Ministério Amar"
         description="Recepção e acompanhamento de novos"
-        breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "AMAR" }]}
+        backHref="/ministerios"
+        breadcrumb={[
+          { label: "Início", href: "/dashboard" },
+          { label: "Ministérios", href: "/ministerios" },
+          { label: "Amar" },
+        ]}
       >
         <Link href="/amar/novo" className={buttonVariants()}>
           <Plus className="size-4" /> Novo cadastro

@@ -1,6 +1,6 @@
 // Service worker mínimo — cache do app shell e estratégia segura.
 // Não intercepta chamadas ao Supabase (origem diferente).
-const CACHE = "evangelho-pleno-v1";
+const CACHE = "evangelho-pleno-v2";
 const APP_SHELL = ["/login"];
 
 self.addEventListener("install", (event) => {
@@ -29,6 +29,13 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return; // ignora Supabase/externos
+
+  // Payloads RSC do App Router (navegação client-side): sempre rede,
+  // nunca cache-first — senão servimos um bundle desatualizado.
+  if (url.searchParams.has("_rsc") || request.headers.get("RSC") === "1") {
+    event.respondWith(fetch(request).catch(() => caches.match(request)));
+    return;
+  }
 
   // Navegações: rede primeiro, com fallback ao cache (offline)
   if (request.mode === "navigate") {
