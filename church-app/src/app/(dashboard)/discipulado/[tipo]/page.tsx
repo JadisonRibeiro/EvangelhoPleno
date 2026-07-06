@@ -51,10 +51,9 @@ export default async function TurmasPage({
       <PageHeader
         title={cfg.label}
         description={`${turmas.length} ${turmas.length === 1 ? "turma" : "turmas"}`}
-        backHref="/discipulado"
+        backHref="/dashboard"
         breadcrumb={[
           { label: "Início", href: "/dashboard" },
-          { label: "Discipulado", href: "/discipulado" },
           { label: cfg.label },
         ]}
       >

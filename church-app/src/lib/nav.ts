@@ -3,7 +3,6 @@ import {
   Church,
   MapPin,
   ClipboardList,
-  HeartHandshake,
   BookOpen,
   Tent,
   Heart,
@@ -61,13 +60,6 @@ export const MODULES: NavItem[] = [
     image: "/images/modules/relatorios.webp",
   },
   {
-    href: "/ministerios",
-    label: "Ministérios",
-    description: "Equipes e serviço",
-    icon: HeartHandshake,
-    image: "/images/modules/ministerios.webp",
-  },
-  {
     href: "/discipulado/abrigo",
     label: "Abrigo",
     description: "Primeiros passos na fé",
@@ -84,7 +76,8 @@ export const MODULES: NavItem[] = [
 ];
 
 /**
- * Ministérios da igreja — exibidos como cards dentro do módulo Ministérios.
+ * Ministérios da igreja — abertos diretamente pelos botões da Home
+ * (não existe mais tela intermediária de Ministérios).
  * "Amar" já possui fluxo completo; os demais abrem uma tela de apresentação
  * ("em breve") até que cada gestão seja definida.
  */
@@ -115,14 +108,14 @@ export const MINISTERIOS: NavItem[] = [
     label: "FGY",
     description: "Ministério de Jovens",
     icon: Flame,
-    image: "/images/ministerios/fgy.svg",
+    image: "/images/ministerios/fgy.webp",
   },
   {
     href: "/ministerios/fgt",
     label: "FGT",
     description: "Ministério de Adolescentes",
     icon: Sparkles,
-    image: "/images/ministerios/fgt.svg",
+    image: "/images/ministerios/fgt.webp",
   },
   {
     href: "/ministerios/kids",

@@ -51,7 +51,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Paginação"
-      className={cn("flex items-center justify-center gap-1", className)}
+      className={cn("flex flex-wrap items-center justify-center gap-1", className)}
     >
       {page > 1 ? (
         <Link

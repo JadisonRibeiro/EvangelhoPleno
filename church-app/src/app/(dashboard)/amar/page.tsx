@@ -73,10 +73,9 @@ export default async function AmarPage({
       <PageHeader
         title="Ministério Amar"
         description="Recepção e acompanhamento de novos"
-        backHref="/ministerios"
+        backHref="/dashboard"
         breadcrumb={[
           { label: "Início", href: "/dashboard" },
-          { label: "Ministérios", href: "/ministerios" },
           { label: "Amar" },
         ]}
       >

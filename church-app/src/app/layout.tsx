@@ -16,6 +16,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Viewport explícito: largura do aparelho, sem zoom inicial nem zoom
+  // automático ao focar inputs (comportamento de app nativo no mobile).
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fcfcfd" },
     { media: "(prefers-color-scheme: dark)", color: "#0c0d0f" },

@@ -31,14 +31,14 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-950 p-4">
+    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-neutral-950 p-4">
       {/* Luz única e discreta — sem excesso de brilho */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-0 size-136 -translate-x-1/2 -translate-y-1/3 rounded-full bg-white/6 blur-3xl" />
       </div>
 
       {/* Cartão de vidro sóbrio */}
-      <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-white/4 p-8 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
+      <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:p-8">
         <div className="mb-8 flex justify-center">
           <Image
             src="/logo-branca.png"
@@ -61,7 +61,7 @@ export default function LoginPage() {
                 placeholder="E-mail"
                 aria-label="E-mail"
                 {...register("email")}
-                className="w-full border-0 border-b border-white/25 bg-transparent py-2 pl-7 text-sm text-white outline-none transition placeholder:text-white/50 focus:border-white/70"
+                className="w-full border-0 border-b border-white/25 bg-transparent py-2 pl-7 text-base text-white outline-none transition placeholder:text-white/50 focus:border-white/70"
               />
             </div>
             {errors.email && (
@@ -81,7 +81,7 @@ export default function LoginPage() {
                 placeholder="Senha"
                 aria-label="Senha"
                 {...register("password")}
-                className="w-full border-0 border-b border-white/25 bg-transparent py-2 pl-7 text-sm text-white outline-none transition placeholder:text-white/50 focus:border-white/70"
+                className="w-full border-0 border-b border-white/25 bg-transparent py-2 pl-7 text-base text-white outline-none transition placeholder:text-white/50 focus:border-white/70"
               />
             </div>
             {errors.password && (

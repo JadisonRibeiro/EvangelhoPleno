@@ -151,6 +151,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Nunca permitir rolagem horizontal: o conteúdo ocupa exatamente a
+     largura da tela em qualquer resolução (Android/iPhone/desktop). */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
@@ -160,6 +168,9 @@
   }
   html {
     @apply font-sans;
+    /* Evita "saltos" de escala de fonte em rotação de tela no iOS */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   /* Títulos com tracking levemente fechado (estética corporativa) */
   h1, h2, h3, h4 {

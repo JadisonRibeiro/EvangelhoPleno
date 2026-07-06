@@ -6,19 +6,20 @@ import { logout } from "../actions";
 
 /**
  * Ações fixas presentes em toda tela: voltar à página inicial e sair do app.
- * Substitui a antiga topbar — sem faixa/identidade duplicada.
+ * O rótulo "Início" fica sempre visível — nenhuma tela pode ficar sem um
+ * caminho claro de volta à tela principal.
  */
 export function AcoesTela({ inicio = true }: { inicio?: boolean }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex shrink-0 items-center gap-1.5">
       {inicio && (
         <Link
           href="/dashboard"
-          aria-label="Página inicial"
+          aria-label="Voltar para a tela principal"
           className={buttonVariants({ variant: "ghost", size: "sm" })}
         >
           <Home className="size-4" />
-          <span className="hidden sm:inline">Início</span>
+          Início
         </Link>
       )}
       <form action={logout}>

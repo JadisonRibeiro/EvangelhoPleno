@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, type Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
@@ -44,6 +44,47 @@ function Secao({
       </legend>
       {children}
     </fieldset>
+  );
+}
+
+/** Select simples controlado — definido fora do form para não recriar o
+ *  componente a cada render (regra react-hooks/static-components). */
+function SelectSimples({
+  control,
+  name,
+  placeholder,
+  opcoes,
+  vazioLabel = "—",
+}: {
+  control: Control<CelulaInput>;
+  name: keyof CelulaInput;
+  placeholder?: string;
+  opcoes: readonly string[];
+  vazioLabel?: string;
+}) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <Select
+          value={(field.value as string) || NENHUM}
+          onValueChange={(v) => field.onChange(v === NENHUM ? "" : v)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={placeholder ?? "Selecione"} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={NENHUM}>{vazioLabel}</SelectItem>
+            {opcoes.map((o) => (
+              <SelectItem key={o} value={o}>
+                {o}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    />
   );
 }
 
@@ -92,43 +133,6 @@ export function CelulaForm({
     });
   }
 
-  function SelectSimples({
-    name,
-    placeholder,
-    opcoes,
-    vazioLabel = "—",
-  }: {
-    name: keyof CelulaInput;
-    placeholder?: string;
-    opcoes: readonly string[];
-    vazioLabel?: string;
-  }) {
-    return (
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <Select
-            value={(field.value as string) || NENHUM}
-            onValueChange={(v) => field.onChange(v === NENHUM ? "" : v)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={placeholder ?? "Selecione"} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={NENHUM}>{vazioLabel}</SelectItem>
-              {opcoes.map((o) => (
-                <SelectItem key={o} value={o}>
-                  {o}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      />
-    );
-  }
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -153,11 +157,11 @@ export function CelulaForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label>Tipo de célula</Label>
-            <SelectSimples name="cell_type" opcoes={TIPOS_CELULA} />
+            <SelectSimples control={control} name="cell_type" opcoes={TIPOS_CELULA} />
           </div>
           <div className="space-y-2">
             <Label>Cor da rede</Label>
-            <SelectSimples name="rede" opcoes={REDES} />
+            <SelectSimples control={control} name="rede" opcoes={REDES} />
           </div>
         </div>
       </Secao>

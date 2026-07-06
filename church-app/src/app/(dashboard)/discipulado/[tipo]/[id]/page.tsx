@@ -69,7 +69,6 @@ export default async function TurmaDetalhePage({
         backHref={`/discipulado/${tipo}`}
         breadcrumb={[
           { label: "Início", href: "/dashboard" },
-          { label: "Discipulado", href: "/discipulado" },
           { label: cfg.label, href: `/discipulado/${tipo}` },
           { label: "Turma" },
         ]}

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
  * Página de apresentação de um ministério ainda sem gestão própria.
  * "Amar" já tem fluxo completo (rota /amar); os demais exibem uma tela
  * elegante de "em breve" com a identidade do ministério.
+ * Aberta diretamente pelos botões da Home — voltar retorna à tela principal.
  */
 export default async function MinisterioSlugPage({
   params,
@@ -28,10 +29,9 @@ export default async function MinisterioSlugPage({
       <PageHeader
         title={ministerio.label}
         description={ministerio.description}
-        backHref="/ministerios"
+        backHref="/dashboard"
         breadcrumb={[
           { label: "Início", href: "/dashboard" },
-          { label: "Ministérios", href: "/ministerios" },
           { label: ministerio.label },
         ]}
       />

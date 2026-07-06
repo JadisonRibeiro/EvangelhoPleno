@@ -86,7 +86,7 @@ export default async function DashboardPage() {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="rounded-2xl border bg-background/60 p-4 backdrop-blur-sm"
+                className="min-w-0 rounded-2xl border bg-background/60 p-3 backdrop-blur-sm sm:p-4"
               >
                 <s.icon className="size-4 text-muted-foreground" />
                 <p
@@ -95,7 +95,9 @@ export default async function DashboardPage() {
                 >
                   {s.value}
                 </p>
-                <p className="mt-1.5 text-xs text-muted-foreground">{s.label}</p>
+                <p className="mt-1.5 truncate text-[11px] text-muted-foreground sm:text-xs">
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
@@ -107,6 +109,25 @@ export default async function DashboardPage() {
         <SectionTitle hint={`${MODULES.length} módulos`}>Módulos</SectionTitle>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {MODULES.map((m) => (
+            <ModuleCard
+              key={m.href}
+              href={m.href}
+              label={m.label}
+              description={m.description}
+              image={m.image}
+              icon={m.icon}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Ministérios — direto na tela principal */}
+      <section className="space-y-4">
+        <SectionTitle hint={`${MINISTERIOS.length} ministérios`}>
+          Ministérios
+        </SectionTitle>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {MINISTERIOS.map((m) => (
             <ModuleCard
               key={m.href}
               href={m.href}

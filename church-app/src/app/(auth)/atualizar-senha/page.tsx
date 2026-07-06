@@ -71,7 +71,7 @@ export default function AtualizarSenhaPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center bg-muted/40 p-4">
+    <main className="relative flex min-h-dvh w-full items-center justify-center bg-muted/40 p-4">
       <div className="flex w-full max-w-sm flex-col items-center gap-6">
         <Logo className="[&_img]:h-10" />
         <Card className="w-full">

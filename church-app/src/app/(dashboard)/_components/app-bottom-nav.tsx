@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { MODULES, PRIMARY } from "@/lib/nav";
+import { MODULES, MINISTERIOS, PRIMARY } from "@/lib/nav";
 import {
   Sheet,
   SheetContent,
@@ -67,13 +67,13 @@ export function AppBottomNav() {
           />
           <SheetContent
             side="bottom"
-            className="rounded-t-3xl border-t pb-[calc(env(safe-area-inset-bottom)+1rem)]"
+            className="max-h-[85dvh] overflow-y-auto rounded-t-3xl border-t pb-[calc(env(safe-area-inset-bottom)+1rem)]"
           >
             <SheetHeader className="p-4 pb-2">
               <SheetTitle>Navegação</SheetTitle>
             </SheetHeader>
             <div className="grid grid-cols-2 gap-2 px-4">
-              {MODULES.map((m) => {
+              {[...MODULES, ...MINISTERIOS].map((m) => {
                 const ativo = ehAtivo(pathname, m.href);
                 return (
                   <Link

@@ -4,7 +4,7 @@ export default function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-dvh w-full flex-col">
       <main className="pb-safe-nav flex-1">
         <div className="app-container">{children}</div>
       </main>
