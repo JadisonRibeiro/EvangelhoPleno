@@ -126,10 +126,10 @@ export const MINISTERIOS: NavItem[] = [
   },
 ];
 
-/** Destinos primários da barra inferior no mobile (máx. 4 + Início). */
+/** Destinos primários da barra inferior no mobile. */
 export const PRIMARY: NavItem[] = [
   { href: "/dashboard", label: "Início", icon: LayoutGrid },
   MODULES[0], // Membros
   MODULES[1], // Células
-  MODULES[3], // Relatórios
+  { ...MODULES[3], label: "Relatórios" }, // Rótulo curto na barra
 ];
