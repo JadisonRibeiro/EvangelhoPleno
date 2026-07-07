@@ -2,3 +2,6 @@
 *.xlsx
 *.xls
 *.csv
+
+# Artefatos de build do Next.js (em qualquer nível)
+.next/
