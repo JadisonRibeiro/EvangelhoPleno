@@ -4,9 +4,9 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Card de módulo/ministério — apenas a imagem ilustrativa, no seu tamanho
- * real (sem corte). Sem ícone, título ou zoom; mantém apenas a elevação
- * suave no hover. A identidade de cada botão vem da própria imagem.
+ * Botão de módulo/ministério — apenas a imagem ilustrativa, sem borda,
+ * fundo ou sombra (a arte já traz a própria moldura). Mantém somente a
+ * elevação sutil no hover e o anel de foco para navegação por teclado.
  */
 export function ModuleCard({
   href,
@@ -27,7 +27,9 @@ export function ModuleCard({
       href={href}
       aria-label={label}
       className={cn(
-        "group relative block self-start overflow-hidden rounded-2xl bg-card ring-1 ring-foreground/10 shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:ring-foreground/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "block self-start rounded-2xl transition-transform duration-300 ease-out",
+        "hover:-translate-y-1 active:scale-[0.98]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >
@@ -40,9 +42,9 @@ export function ModuleCard({
           className="block h-auto w-full"
         />
       ) : (
-        <div className="flex aspect-4/3 items-center justify-center bg-secondary text-sm text-muted-foreground">
+        <span className="flex aspect-4/3 items-center justify-center rounded-2xl bg-secondary text-sm text-muted-foreground">
           {label}
-        </div>
+        </span>
       )}
     </Link>
   );

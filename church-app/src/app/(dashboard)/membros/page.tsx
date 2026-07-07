@@ -127,6 +127,7 @@ export default async function MembrosPage({
       <PageHeader
         title="Membros"
         description={`${total} ${total === 1 ? "membro" : "membros"}`}
+        backHref="/dashboard"
         breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Membros" }]}
       >
         <Link href="/membros/novo" className={buttonVariants()}>

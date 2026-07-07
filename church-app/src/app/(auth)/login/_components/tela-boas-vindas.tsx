@@ -9,14 +9,15 @@ import { FundoPremium } from "./fundo-premium";
 
 /** Tempo em tela antes de iniciar a saída (ms). */
 const DURACAO_EXIBICAO = 1400;
-/** Duração da animação de saída (ms) — igual à keyframe `login-saida-zoom`. */
-const DURACAO_SAIDA = 450;
+/** Momento em que a navegação dispara, com o conteúdo já dissolvendo (ms). */
+const MOMENTO_NAVEGACAO = 1650;
 
 /**
  * Tela de boas-vindas em tela cheia exibida após o login com sucesso.
- * Entra com fade + zoom + blur dissolvendo, permanece ~1,5s e sai com
- * fade/zoom-out, navegando automaticamente para a Home — sem botões e
- * sem interação do usuário.
+ * Entra com fade + zoom + blur dissolvendo, permanece ~1,5s e dissolve o
+ * conteúdo, navegando automaticamente para a Home — sem botões e sem
+ * interação. O fundo permanece sólido até a Home montar, para o login
+ * nunca reaparecer por baixo durante a transição.
  */
 export function TelaBoasVindas() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export function TelaBoasVindas() {
     const saida = setTimeout(() => setSaindo(true), DURACAO_EXIBICAO);
     const navegar = setTimeout(
       () => router.replace("/dashboard"),
-      DURACAO_EXIBICAO + DURACAO_SAIDA,
+      MOMENTO_NAVEGACAO,
     );
     return () => {
       clearTimeout(saida);
@@ -40,10 +41,7 @@ export function TelaBoasVindas() {
     <div
       role="status"
       aria-live="polite"
-      className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black transition-opacity duration-[450ms] ease-in",
-        saindo && "opacity-0",
-      )}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black"
     >
       <FundoPremium />
 

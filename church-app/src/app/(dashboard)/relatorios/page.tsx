@@ -60,6 +60,7 @@ export default async function RelatoriosPage({
       <PageHeader
         title="Relatório de Células"
         description={`${relatorios.length} ${relatorios.length === 1 ? "relatório" : "relatórios"}`}
+        backHref="/dashboard"
         breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Relatórios" }]}
       >
         <Link href="/relatorios/novo" className={buttonVariants()}>

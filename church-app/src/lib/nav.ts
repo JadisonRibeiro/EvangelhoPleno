@@ -87,21 +87,21 @@ export const MINISTERIOS: NavItem[] = [
     label: "Amar",
     description: "Acolhimento de novos convertidos",
     icon: Heart,
-    image: "/images/ministerios/amar.svg",
+    image: "/images/ministerios/amar.webp",
   },
   {
     href: "/ministerios/consolidar",
     label: "Consolidar",
     description: "Firmar os novos na fé",
     icon: Link2,
-    image: "/images/ministerios/consolidar.svg",
+    image: "/images/ministerios/consolidar.webp",
   },
   {
     href: "/ministerios/acolher",
     label: "Acolher",
     description: "Recepção e hospitalidade",
     icon: HandHeart,
-    image: "/images/ministerios/acolher.svg",
+    image: "/images/ministerios/acolher.webp",
   },
   {
     href: "/ministerios/fgy",
@@ -122,7 +122,7 @@ export const MINISTERIOS: NavItem[] = [
     label: "Kids",
     description: "Ministério infantil",
     icon: Baby,
-    image: "/images/ministerios/kids.svg",
+    image: "/images/ministerios/kids.webp",
   },
 ];
 

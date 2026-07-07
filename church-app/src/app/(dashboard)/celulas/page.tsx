@@ -76,6 +76,7 @@ export default async function CelulasPage({
       <PageHeader
         title="Células"
         description={`${celulas.length} ${celulas.length === 1 ? "célula" : "células"}`}
+        backHref="/dashboard"
         breadcrumb={[{ label: "Início", href: "/dashboard" }, { label: "Células" }]}
       >
         <Link
