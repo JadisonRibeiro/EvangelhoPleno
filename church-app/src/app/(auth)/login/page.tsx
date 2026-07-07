@@ -6,14 +6,25 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Check } from "lucide-react";
 
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 import { login } from "./actions";
+import { FundoPremium } from "./_components/fundo-premium";
+import { CampoLogin } from "./_components/campo-login";
+import { BotaoPremium } from "./_components/botao-premium";
+import { TelaBoasVindas } from "./_components/tela-boas-vindas";
 
+/**
+ * Tela de login premium — monocromática (preto/branco/cinzas), com a logo
+ * como protagonista, cartão glassmorphism e animações de entrada em
+ * sequência. Após autenticar, exibe a tela de boas-vindas em tela cheia
+ * e navega automaticamente para a Home.
+ */
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
   const [lembrar, setLembrar] = useState(true);
+  const [bemVindo, setBemVindo] = useState(false);
   const {
     register,
     handleSubmit,
@@ -26,104 +37,95 @@ export default function LoginPage() {
   function onSubmit(values: LoginInput) {
     startTransition(async () => {
       const result = await login(values);
-      if (result?.error) toast.error(result.error);
+      if ("error" in result) toast.error(result.error);
+      else setBemVindo(true);
     });
   }
 
   return (
-    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-neutral-950 p-4">
-      {/* Luz única e discreta — sem excesso de brilho */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 size-136 -translate-x-1/2 -translate-y-1/3 rounded-full bg-white/6 blur-3xl" />
-      </div>
+    <main className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-black p-4">
+      <FundoPremium />
 
-      {/* Cartão de vidro sóbrio */}
-      <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:p-8">
-        <div className="mb-8 flex justify-center">
+      {/* Cartão de vidro */}
+      <div className="anim-entrada-suave relative w-full max-w-sm rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_60px_-16px_rgba(0,0,0,0.8)] backdrop-blur-2xl sm:p-8">
+        {/* Reflexo superior do vidro */}
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />
+
+        {/* Logo — protagonista, com brilho e entrada em zoom */}
+        <div className="anim-entrada-zoom relative mx-auto mb-10 mt-4 w-fit">
+          <div className="anim-brilho absolute inset-0 -z-10 scale-150 rounded-full bg-white/20 blur-2xl" />
           <Image
             src="/logo-branca.png"
             alt="Evangelho Pleno"
-            width={180}
-            height={72}
+            width={260}
+            height={104}
             priority
-            className="h-11 w-auto"
+            className="h-16 w-auto drop-shadow-[0_2px_20px_rgba(255,255,255,0.28)] sm:h-20"
           />
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-          {/* E-mail */}
-          <div>
-            <div className="relative">
-              <Mail className="pointer-events-none absolute left-0 top-1/2 size-4 -translate-y-1/2 text-white/60" />
-              <input
-                type="email"
-                autoComplete="email"
-                placeholder="E-mail"
-                aria-label="E-mail"
-                {...register("email")}
-                className="w-full border-0 border-b border-white/25 bg-transparent py-2 pl-7 text-base text-white outline-none transition placeholder:text-white/50 focus:border-white/70"
-              />
-            </div>
-            {errors.email && (
-              <p className="mt-1.5 text-xs text-red-300">
-                {errors.email.message}
-              </p>
-            )}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          {/* Campos aparecendo em sequência */}
+          <div className="anim-entrada-suave [animation-delay:150ms]">
+            <CampoLogin
+              id="email"
+              tipo="email"
+              icone={Mail}
+              placeholder="E-mail"
+              autoComplete="email"
+              registro={register("email")}
+              erro={errors.email?.message}
+            />
           </div>
 
-          {/* Senha */}
-          <div>
-            <div className="relative">
-              <Lock className="pointer-events-none absolute left-0 top-1/2 size-4 -translate-y-1/2 text-white/60" />
-              <input
-                type="password"
-                autoComplete="current-password"
-                placeholder="Senha"
-                aria-label="Senha"
-                {...register("password")}
-                className="w-full border-0 border-b border-white/25 bg-transparent py-2 pl-7 text-base text-white outline-none transition placeholder:text-white/50 focus:border-white/70"
-              />
-            </div>
-            {errors.password && (
-              <p className="mt-1.5 text-xs text-red-300">
-                {errors.password.message}
-              </p>
-            )}
+          <div className="anim-entrada-suave [animation-delay:250ms]">
+            <CampoLogin
+              id="password"
+              senha
+              icone={Lock}
+              placeholder="Senha"
+              autoComplete="current-password"
+              registro={register("password")}
+              erro={errors.password?.message}
+            />
           </div>
 
-          {/* Lembrar / Esqueceu */}
-          <div className="flex items-center justify-between text-xs text-white/70">
-            <label className="flex cursor-pointer select-none items-center gap-2">
-              <input
-                type="checkbox"
-                checked={lembrar}
-                onChange={(e) => setLembrar(e.target.checked)}
-                className="size-3.5 accent-white"
-              />
-              Lembrar de mim
+          {/* Lembrar-me / Esqueceu sua senha? */}
+          <div className="anim-entrada-suave flex items-center justify-between text-sm text-[#6E6E6E] [animation-delay:350ms]">
+            <label className="flex cursor-pointer select-none items-center gap-2.5 transition-colors duration-200 hover:text-white">
+              <span className="relative flex size-5 items-center justify-center">
+                <input
+                  type="checkbox"
+                  checked={lembrar}
+                  onChange={(e) => setLembrar(e.target.checked)}
+                  className="peer size-5 cursor-pointer appearance-none rounded-md border border-white/25 bg-white/6 transition-all duration-200 checked:border-white checked:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                />
+                <Check
+                  className="pointer-events-none absolute size-3.5 text-black opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
+                  strokeWidth={3}
+                />
+              </span>
+              Lembrar-me
             </label>
             <Link
               href="/recuperar-senha"
-              className="transition hover:text-white"
+              className="rounded-sm transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
             >
-              Esqueceu a senha?
+              Esqueceu sua senha?
             </Link>
           </div>
 
-          {/* Botão */}
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full rounded-xl bg-white py-3 text-sm font-semibold text-neutral-900 transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isPending ? "Entrando..." : "Entrar"}
-          </button>
+          {/* Botão Entrar */}
+          <div className="anim-entrada-suave pt-1 [animation-delay:450ms]">
+            <BotaoPremium type="submit" disabled={isPending}>
+              {isPending ? "Entrando..." : "Entrar"}
+            </BotaoPremium>
+          </div>
         </form>
-
-        <p className="mt-8 text-center text-[11px] tracking-wide text-white/40">
-          Evangelho Pleno · Gestão da Igreja
-        </p>
       </div>
+
+      {/* Transição pós-login: boas-vindas em tela cheia → Home */}
+      {bemVindo && <TelaBoasVindas />}
     </main>
   );
 }

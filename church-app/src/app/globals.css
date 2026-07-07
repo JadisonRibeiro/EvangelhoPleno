@@ -220,6 +220,97 @@
   }
 }
 
+/*
+ * Animações premium — tela de login e tela de boas-vindas.
+ * Curva "ease-out expo" para sensação de fluidez (Apple/Linear-like).
+ */
+@layer utilities {
+  .anim-entrada-suave {
+    animation: login-entrada-suave 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .anim-entrada-zoom {
+    animation: login-entrada-zoom 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .anim-saida-zoom {
+    animation: login-saida-zoom 0.45s ease-in both;
+  }
+  /* Pulso de brilho contínuo (halo atrás da logo) */
+  .anim-brilho {
+    animation: login-brilho 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes login-entrada-suave {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes login-entrada-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes login-saida-zoom {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+@keyframes login-brilho {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+/* Onda (ripple) criada dinamicamente ao clicar no botão Entrar */
+.ripple-login {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: login-ripple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes login-ripple {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* Acessibilidade: respeita usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .anim-entrada-suave,
+  .anim-entrada-zoom,
+  .anim-saida-zoom,
+  .anim-brilho,
+  .ripple-login {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 @layer utilities {
   /* Respiro inferior em telas com a barra de navegação mobile fixa */
   .pb-safe-nav {

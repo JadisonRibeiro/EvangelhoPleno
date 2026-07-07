@@ -1,14 +1,14 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 
-export type LoginResult = { error: string } | undefined;
+export type LoginResult = { ok: true } | { error: string };
 
 /**
  * Autentica via Supabase Auth. Revalida no servidor com Zod antes de chamar
- * o Supabase. Em caso de sucesso, redireciona para o dashboard.
+ * o Supabase. Em caso de sucesso retorna `ok` — o cliente exibe a tela de
+ * boas-vindas e navega para a Home ao fim da transição.
  */
 export async function login(values: LoginInput): Promise<LoginResult> {
   const parsed = loginSchema.safeParse(values);
@@ -23,5 +23,5 @@ export async function login(values: LoginInput): Promise<LoginResult> {
     return { error: "E-mail ou senha incorretos." };
   }
 
-  redirect("/dashboard");
+  return { ok: true };
 }
